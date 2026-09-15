@@ -1,11 +1,13 @@
 import ProductCard from "../components/WatchCard.jsx";
 import { products } from "../data/watches.js"; // Шлях до файлу з вашими тестовими даними
+const appTitle =
+  import.meta.env.VITE_APP_TITLE || "Магазин наручних годинників";
 
 export default function HomePage() {
   return (
     <>
       <section id="about" aria-labelledby="about-title">
-        <h1 id="about-title">Магазин годинників</h1>
+        <h1 id="about-title"> {appTitle} </h1>
         <p>
           Каталог оригінальних наручних годинників від відомих світових брендів.
         </p>
