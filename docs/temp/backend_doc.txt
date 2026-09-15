@@ -1,0 +1,125 @@
+-- 1. Таблиця брендів (Категорії)
+CREATE TABLE brands (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE
+);
+
+-- 2. Таблиця товарів (Годинники)
+CREATE TABLE products (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    brand_id INT,
+    title VARCHAR(255) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL, -- DECIMAL краще для грошей, ніж FLOAT
+    gender ENUM('Чоловічий', 'Жіночий', 'Унісекс') DEFAULT 'Унісекс',
+    mechanism VARCHAR(50),         -- Наприклад: 'Кварцовий', 'Механічний'
+    glass VARCHAR(50),             -- Наприклад: 'Сапфірове', 'Мінеральне'
+    strap_material VARCHAR(50),
+    water_resistance VARCHAR(50),
+    stock INT DEFAULT 0, -- ???? 
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (brand_id) REFERENCES brands(id) ON DELETE SET NULL
+);
+
+-- 3. Таблиця зображень (Дозволяє мати кілька фото на 1 товар)
+CREATE TABLE product_images (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    image_url VARCHAR(255) NOT NULL,
+    is_main BOOLEAN DEFAULT FALSE, -- Позначка для головного фото в каталозі
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+-- 4. Таблиця користувачів (Покупці)
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    phone_number VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 5. Таблиця адміністраторів
+-- Альтернатива: додати поле role ENUM('user', 'admin') у таблицю users, але окрема таблиця теж є валідною.
+CREATE TABLE admins (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 6. Замовлення (Кошик перетворюється на це після чекауту)
+CREATE TABLE orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT, -- NULL дозволяє робити покупки без реєстрації
+    total_price DECIMAL(10, 2) NOT NULL,
+    status ENUM('Нове', 'В обробці', 'Відправлено', 'Виконано', 'Скасовано') DEFAULT 'Нове',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
+-- 7. Елементи замовлення (Що саме купили)
+CREATE TABLE order_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity INT NOT NULL DEFAULT 1,
+    price_at_purchase DECIMAL(10, 2) NOT NULL, -- Фіксуємо ціну на момент покупки (бо в майбутньому ціна товару може змінитись)
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT
+);
+
+---
+
+Базовий CRUD для 
+
+brands
+
+products
+product_images
+
+users (without delete)
+admins (without create, delete)
+
+orders (additional change status)
+order_items
+
+---
+
+Метод,Маршрут,Опис,Тіло запиту (Body) / Query
+GET,/api/brands,Отримати список всіх брендів,-
+GET,/api/products,Отримати каталог з фільтрами,?brand_id=1&sort=price_asc
+GET,/api/products/:id,Деталі годинника + масив його фото,-
+POST,/api/auth/register,Реєстрація нового покупця,"name, email, password", після чого виконується вхід (повертає токен)
+POST,/api/auth/login,Вхід покупця (повертає токен),"email, password"
+GET,/api/users/profile,Отримати дані свого профілю,(Потрібен токен користувача)
+PUT,/api/users/profile/edit/password, Змінити пароль свого профілю,
+POST,/api/users/profile/edit, Змінити дані (пошта, ім'я, номер телефону) свого профілю,
+POST,/api/orders,Оформлення замовлення (Чекаут),"user_id (опц.), total_price, items: [{product_id, quantity, price}]"
+GET,/api/orders/my-orders,Історія покупок авторизованого клієнта,(Потрібен токен користувача)
+
+Метод,Маршрут,Опис,Тіло запиту (Body)
+POST,/api/admin/auth/login,Вхід адміністратора,"email, password"
+GET,/api/admin/brands,Список брендів,-
+POST,/api/admin/brands,Створити новий бренд,name
+PUT,/api/admin/brands/:id,Редагувати бренд,name
+DELETE,/api/admin/brands/:id,Видалити бренд,-
+GET,/api/admin/products,Всі товари (для таблиці в адмінці),-
+POST,/api/admin/products,Додати новий годинник,Всі поля таблиці products
+PUT,/api/admin/products/:id,Оновити інформацію про годинник,Поля для оновлення
+DELETE,/api/admin/products/:id,Видалити годинник (каскадно видалить фото),-
+POST,/api/admin/products/:id/images,Завантажити нове фото для товару,Файл зображення (Form Data)
+DELETE,/api/admin/images/:id,Видалити конкретне фото,-
+GET,/api/admin/users,Перегляд списку клієнтів,-
+GET,/api/admin/orders,Список всіх замовлень магазину,-
+GET,/api/admin/orders/:id,"Деталі замовлення (які товари, адреса)",-
+PATCH,/api/admin/orders/:id/status,"Змінити статус (напр., ""Відправлено"")",status
+
+---
+
+Сесії користувачів та адміністраторів ????
+Race coditions для замовлень
+
+---
+
