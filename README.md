@@ -13,12 +13,15 @@ Docker і Docker Compose: 27.2.0
 
 ## Запуск
 
-Нативно: npm install, потім npm run dev.
+Нативно:
+npm install, потім npm run dev.
 Docker: docker compose build,
 docker compose run --rm web npm install,
 потім docker compose up.
 Адреса Docker: http://localhost:5173.
-Зупинення й видалення контейнера: docker compose down.
+Зупинення й видалення контейнера:
+docker compose stop,
+docker compose down.
 
 ## Збірка
 
