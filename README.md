@@ -1,34 +1,42 @@
 # Магазин наручних годинників
 
-Магазин наручних годинників, де пропонується каталог із наручними годинниками, з яких можна буде формувати замовлення.
-Поточний результат: початкова сторінка з локальними даними.
+Вебзастосунок для магазину наручних годинників із каталогом продукції та макетами для формування замовлень.
+
+**Поточний результат:** Створено повноцінну компонентну архітектуру (Л 1.2), яка містить головну сторінку з каталогом, сторінку детальної інформації про товар, форму оформлення замовлення та спільні UI-елементи з локальними тестовими даними.
 
 ## Середовище
 
-Node.js: v24.21.0
-npm: 11.19.0
-Git: 2.45.2.windows.1
-Docker і Docker Compose: 27.2.0
-Основний варіант: Магазин наручних годинників
+- **Node.js:** v24.21.0
+- **npm:** 11.19.0
+- **Git:** 2.45.2.windows.1
+- **Docker і Docker Compose:** 27.2.0
+- **Основний варіант середовища:** Windows із підтримкою контейнеризації Docker.
 
 ## Запуск
 
-Нативно:
-npm install, потім npm run dev.
-Docker: docker compose build,
-docker compose run --rm web npm install,
-потім docker compose up.
-Адреса Docker: http://localhost:5173.
-Зупинення й видалення контейнера:
-docker compose stop,
-docker compose down.
+### Нативно:
+
+1. Встановіть залежності: `npm install`.
+2. Запустіть сервер розробки: `npm run dev`.
+
+### У середовищі Docker:
+
+1. Зберіть образ: `docker compose build`.
+2. Установіть залежності в контейнері: `docker compose run --rm web npm install`.
+3. Запустіть контейнер: `docker compose up`.
+4. Адреса для перегляду в браузері: `http://localhost:5173`.
+
+**Зупинення й видалення контейнера:**
+
+- Зупинити: `docker compose stop`.
+- Видалити: `docker compose down`.
 
 ## Збірка
 
-npm run build
-Або: docker compose run --rm web npm run build
+- Нативно: `npm run build`.
+- У Docker: `docker compose run --rm web npm run build`.
 
-## План
+## План та архітектура
 
-Див. docs/project-plan.md.
-Форми й маршрути ще заплановані.
+- Детальний опис предметної області та бізнес-логіки див. у [docs/project-plan.md](docs/project-plan.md).
+- Опис компонентів, ієрархії та контрактів властивостей (props) див. у [docs/component-architecture.md](docs/component-architecture.md).
