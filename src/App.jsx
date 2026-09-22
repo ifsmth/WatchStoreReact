@@ -1,8 +1,7 @@
-import { useState } from "react";
 import AppLayout from "./components/layout/AppLayout.jsx";
-import HomePage from "./pages/HomePage.jsx";
-import OrderPage from "./pages/OrderPage.jsx";
-import { products } from "./data/products.js";
+import CatalogContainer from "./containers/CatalogContainer.jsx";
+import OrderContainer from "./containers/OrderContainer.jsx";
+import { ProductSelectionProvider } from "./contexts/ProductSelectionContext.jsx";
 
 const navigationLinks = [
   { href: "#about", label: "Про магазин" },
@@ -11,37 +10,13 @@ const navigationLinks = [
 ];
 
 export default function App() {
-  // Спільний стан вибору (ідентифікатор товару)
-  const [selectedId, setSelectedId] = useState(null);
-
-  // Похідне значення: пошук об'єкта годинника за вибраним ідентифікатором
-  const selectedItem = products.find((item) => item.id === selectedId);
-
-  // Обробник вибору товару
-  function handleSelect(id) {
-    // Перевірка some захищає контракт від передачі невідомого ідентифікатора
-    if (products.some((item) => item.id === id)) {
-      setSelectedId(id);
-    }
-  }
-
-  // Обробник скасування вибору
-  function handleClearSelection() {
-    setSelectedId(null);
-  }
-
   return (
     <AppLayout title="Магазин годинників" links={navigationLinks}>
-      <HomePage
-        items={products}
-        selectedId={selectedId}
-        onSelect={handleSelect}
-      />
-      <OrderPage
-        key={selectedId ?? "empty"}
-        item={selectedItem}
-        onClearSelection={handleClearSelection}
-      />
+      <ProductSelectionProvider>
+        {/* Контейнери тепер самі дістають те, що їм треба */}
+        <CatalogContainer />
+        <OrderContainer />
+      </ProductSelectionProvider>
     </AppLayout>
   );
 }
