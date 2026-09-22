@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Section from "../components/ui/Section.jsx";
 import EmptyState from "../components/ui/EmptyState.jsx";
 import AppButton from "../components/ui/AppButton.jsx";
@@ -6,16 +6,31 @@ import StockBadge from "../components/products/StockBadge.jsx";
 import OrderForm from "../components/orders/OrderForm.jsx";
 import OrderSummary from "../components/orders/OrderSummary.jsx";
 
-// Функція для створення порожньої чернетки
 function createEmptyDraft() {
   return { customerName: "", customerPhone: "", comment: "" };
 }
 
 export default function OrderPage({ item, onClearSelection }) {
-  // Стан чернетки з твоїми полями
   const [draft, setDraft] = useState(createEmptyDraft);
 
-  // Універсальний обробник для всіх текстових полів
+  // Синхронізація заголовка вкладки з обраним товаром
+  useEffect(() => {
+    // Якщо товар не вибрано, нічого не робимо
+    if (!item) return;
+
+    // Зберігаємо оригінальний заголовок
+    const originalTitle = document.title;
+
+    // Встановлюємо новий заголовок
+    document.title = `Оформлення: ${item.title}`;
+
+    // Функція очищення (cleanup), яка повертає старий заголовок
+    // при розмонтуванні компонента або перед наступним викликом ефекту
+    return () => {
+      document.title = originalTitle;
+    };
+  }, [item]); // Ефект перезапускається лише при зміні об'єкта item
+
   function handleDraftChange(field, value) {
     setDraft((previous) => ({ ...previous, [field]: value }));
   }
@@ -24,7 +39,6 @@ export default function OrderPage({ item, onClearSelection }) {
     setDraft(createEmptyDraft());
   }
 
-  // Якщо товар не вибрано - показуємо порожній стан
   if (!item) {
     return (
       <Section id="request" title="Оформлення замовлення">
