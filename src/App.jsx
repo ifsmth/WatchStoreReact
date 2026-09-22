@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AppLayout from "./components/layout/AppLayout.jsx";
 import HomePage from "./pages/HomePage.jsx";
-import CartPage from "./pages/CartPage.jsx";
+import OrderPage from "./pages/OrderPage.jsx";
 import { products } from "./data/products.js";
 
 const navigationLinks = [
@@ -37,7 +37,7 @@ export default function App() {
         selectedId={selectedId}
         onSelect={handleSelect}
       />
-      <CartPage
+      <OrderPage
         key={selectedId ?? "empty"}
         item={selectedItem}
         onClearSelection={handleClearSelection}
