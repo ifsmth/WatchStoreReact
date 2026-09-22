@@ -1,6 +1,14 @@
+import { useState } from "react";
 import StockBadge from "./StockBadge.jsx";
+import AppButton from "../ui/AppButton.jsx";
 
-export default function ProductCard({ item }) {
+export default function ProductCard({ item, selected, onSelect }) {
+  // Локальний стан для розгортання опису
+  const [detailsOpen, setDetailsOpen] = useState(false);
+
+  // Унікальний ID для зв'язку кнопки розгортання з блоком тексту
+  const descriptionId = `product-${item.id}-description`;
+
   return (
     <article className="product-card">
       <h3>{item.title}</h3>
@@ -23,11 +31,33 @@ export default function ProductCard({ item }) {
         </li>
       </ul>
 
-      <p className="description">{item.description}</p>
-
       <p>
         <StockBadge stock={item.stock} />
       </p>
+
+      {/* Кнопка керування локальним станом */}
+      <AppButton
+        variant="secondary"
+        aria-expanded={detailsOpen}
+        aria-controls={descriptionId}
+        onClick={() => setDetailsOpen((previous) => !previous)}
+      >
+        {detailsOpen ? "Згорнути опис" : "Показати опис"}
+      </AppButton>
+
+      {/* Прихований/відкритий текст опису */}
+      <p id={descriptionId} hidden={!detailsOpen} className="description">
+        {item.description}
+      </p>
+
+      {/* Кнопка вибору товару для замовлення */}
+      <p>
+        <AppButton aria-pressed={selected} onClick={() => onSelect(item.id)}>
+          Вибрати «{item.title}»
+        </AppButton>
+      </p>
+
+      {selected && <p className="selection-note">Обрано для замовлення.</p>}
     </article>
   );
 }
