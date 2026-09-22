@@ -1,32 +1,18 @@
-import { useState } from "react";
 import Section from "../components/ui/Section.jsx";
 import ProductFilters from "../components/products/ProductFilters.jsx";
 import ProductList from "../components/products/ProductList.jsx";
+import { useProductFilters } from "../hooks/useProductFilters.jsx";
 
 export default function HomePage({ items, selectedId, onSelect }) {
-  // Стан інтерфейсу каталогу
-  const [query, setQuery] = useState("");
-  const [availableOnly, setAvailableOnly] = useState(false);
-
-  // Обчислення похідного списку товарів (без окремого useState)
-  const normalizedQuery = query.trim().toLocaleLowerCase("uk");
-
-  const visibleItems = items.filter((item) => {
-    // Шукаємо збіг у назві (title)
-    const matchesQuery = item.title
-      .toLocaleLowerCase("uk")
-      .includes(normalizedQuery);
-    // Перевіряємо наявність: якщо прапорець вимкнено - пропускаємо всі, інакше тільки ті, де stock > 0
-    const matchesAvailability = !availableOnly || item.stock > 0;
-
-    return matchesQuery && matchesAvailability;
-  });
-
-  // Обробник очищення фільтрів
-  function resetFilters() {
-    setQuery("");
-    setAvailableOnly(false);
-  }
+  // Викликаємо власний хук і дістаємо з нього всі необхідні змінні
+  const {
+    query,
+    availableOnly,
+    setQuery,
+    setAvailableOnly,
+    resetFilters,
+    visibleItems,
+  } = useProductFilters(items);
 
   return (
     <>
