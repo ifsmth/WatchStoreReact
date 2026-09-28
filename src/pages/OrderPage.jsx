@@ -1,85 +1,84 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import PageHeading from "../components/ui/PageHeading.jsx";
 import Section from "../components/ui/Section.jsx";
-import EmptyState from "../components/ui/EmptyState.jsx";
 import AppButton from "../components/ui/AppButton.jsx";
 import StockBadge from "../components/products/StockBadge.jsx";
 import OrderForm from "../components/orders/OrderForm.jsx";
 import OrderSummary from "../components/orders/OrderSummary.jsx";
 
-function createEmptyDraft() {
-  return { customerName: "", customerPhone: "", comment: "" };
-}
+// Порожня чернетка за замовчуванням
+const emptyDraft = { customerName: "", customerPhone: "", comment: "" };
 
-export default function OrderPage({ item, onClearSelection }) {
-  const [draft, setDraft] = useState(createEmptyDraft);
+export default function CartPage({
+  title,
+  item,
+  initialDraft = emptyDraft,
+  onCancel,
+  cancelLabel = "Вийти без збереження",
+}) {
+  // Ініціалізуємо стан із переданої чернетки
+  const [draft, setDraft] = useState(() => ({
+    ...emptyDraft,
+    ...initialDraft,
+  }));
 
-  // Синхронізація заголовка вкладки з обраним товаром
-  useEffect(() => {
-    // Якщо товар не вибрано, нічого не робимо
-    if (!item) return;
-
-    // Зберігаємо оригінальний заголовок
-    const originalTitle = document.title;
-
-    // Встановлюємо новий заголовок
-    document.title = `Оформлення: ${item.title}`;
-
-    // Функція очищення (cleanup), яка повертає старий заголовок
-    // при розмонтуванні компонента або перед наступним викликом ефекту
-    return () => {
-      document.title = originalTitle;
-    };
-  }, [item]); // Ефект перезапускається лише при зміні об'єкта item
+  // Захист від падіння, якщо товар не знайдено
+  if (!item) {
+    return (
+      <>
+        <PageHeading title={title} />
+        <div style={{ padding: "2rem", textAlign: "center" }}>
+          <h2>Помилка завантаження</h2>
+          <p>
+            Дані про вибраний товар відсутні або товар було видалено з бази.
+          </p>
+          <AppButton variant="secondary" onClick={onCancel}>
+            {cancelLabel}
+          </AppButton>
+        </div>
+      </>
+    );
+  }
 
   function handleDraftChange(field, value) {
     setDraft((previous) => ({ ...previous, [field]: value }));
   }
 
   function handleReset() {
-    setDraft(createEmptyDraft());
-  }
-
-  if (!item) {
-    return (
-      <Section id="request" title="Оформлення замовлення">
-        <EmptyState title="Годинник ще не вибрано.">
-          <p>
-            <a href="#catalog">Виберіть модель у каталозі</a>
-          </p>
-        </EmptyState>
-      </Section>
-    );
+    setDraft({ ...emptyDraft, ...initialDraft });
   }
 
   return (
-    <Section id="request" title="Оформлення замовлення">
-      <p>
-        Обрано «{item.title}»: <StockBadge stock={item.stock} />
-      </p>
+    <>
+      <PageHeading title={title} />
+      <Section id="request-editor" title="Поля та підсумок">
+        <p>
+          Годинник «{item.title}»: <StockBadge stock={item.stock} />
+        </p>
 
-      <div
-        style={{
-          display: "grid",
-          gap: "2rem",
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-        }}
-      >
-        <OrderForm
-          idPrefix="order-draft"
-          productTitle={item.title}
-          draft={draft}
-          onDraftChange={handleDraftChange}
-          onReset={handleReset}
-        />
-
-        <OrderSummary productTitle={item.title} draft={draft} />
-      </div>
+        <div
+          style={{
+            display: "grid",
+            gap: "2rem",
+            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          }}
+        >
+          <OrderForm
+            idPrefix="order-draft"
+            productTitle={item.title}
+            draft={draft}
+            onDraftChange={handleDraftChange}
+            onReset={handleReset}
+          />
+          <OrderSummary productTitle={item.title} draft={draft} />
+        </div>
+      </Section>
 
       <div style={{ marginTop: "2rem" }}>
-        <AppButton variant="secondary" onClick={onClearSelection}>
-          Скасувати вибір і очистити чернетку
+        <AppButton variant="secondary" onClick={onCancel}>
+          {cancelLabel}
         </AppButton>
       </div>
-    </Section>
+    </>
   );
 }

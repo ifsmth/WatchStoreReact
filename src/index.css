@@ -218,3 +218,49 @@ textarea:focus-visible {
 .status-container {
   margin-block: 1rem;
 }
+
+.site-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: inherit;
+}
+
+.nav-link {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  text-decoration: none;
+}
+
+/* Підсвічування активного пункту меню (надається NavLink) */
+.nav-list a.active,
+.nav-list a[aria-current="page"] {
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.25rem;
+}
+
+/* Стилі для таблиці замовлень */
+.table-scroll {
+  overflow-x: auto;
+  margin-block: 1.5rem;
+}
+
+.requests-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.requests-table th,
+.requests-table td {
+  padding: 0.625rem;
+  border: 1px solid #c7d2dc;
+  text-align: left;
+  vertical-align: top;
+}
+
+.requests-table caption {
+  text-align: left;
+  margin-block: 0.75rem;
+  font-weight: 600;
+}

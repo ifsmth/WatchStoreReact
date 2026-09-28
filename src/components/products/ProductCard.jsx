@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import StockBadge from "./StockBadge.jsx";
 import AppButton from "../ui/AppButton.jsx";
 

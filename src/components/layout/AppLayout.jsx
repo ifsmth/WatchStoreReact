@@ -1,18 +1,21 @@
+import { Outlet } from "react-router";
 import SiteHeader from "./SiteHeader.jsx";
 
-export default function AppLayout({ title, links, children }) {
+const navigationLinks = [
+  { to: "/", label: "Головна", end: true },
+  { to: "/products", label: "Каталог" },
+  { to: "/orders", label: "Замовлення" },
+];
+
+export default function AppLayout() {
   return (
     <>
-      <a className="skip-link" href="#main-content">
-        Перейти до вмісту
-      </a>
-      <SiteHeader title={title} links={links} />
+      <SiteHeader title="Магазин годинників" links={navigationLinks} />
       <main id="main-content" tabIndex={-1}>
-        {children}
+        {/* Сюди підставлятимуться сторінки з нашого дерева Route */}
+        <Outlet />
       </main>
-      <footer>
-        Навчальний проєкт. Каталог годинників та макет замовлення.
-      </footer>
+      <footer>Навчальний проєкт.</footer>
     </>
   );
 }
