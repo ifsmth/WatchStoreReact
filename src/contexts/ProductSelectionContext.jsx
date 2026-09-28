@@ -36,6 +36,8 @@ export function ProductSelectionProvider({ children }) {
 }
 
 // 3. Кастомний хук із перевіркою на помилки інтеграції
+// Контекст і хук мають бути поруч, щоб не дублювати його внутрішній об'єкт.
+// eslint-disable-next-line react-refresh/only-export-components
 export function useProductSelection() {
   const context = useContext(ProductSelectionContext);
 
