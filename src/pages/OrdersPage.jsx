@@ -1,50 +1,69 @@
+import { useState } from "react";
 import { Link } from "react-router";
 import PageHeading from "../components/ui/PageHeading.jsx";
 import EmptyState from "../components/ui/EmptyState.jsx";
+import AppButton from "../components/ui/AppButton.jsx";
+import OrderFilters from "../components/orders/OrderFilters.jsx";
+import OrderTable from "../components/orders/OrderTable.jsx";
+import { useOrders } from "../contexts/OrdersContext.jsx";
+import useOrderFilters from "../hooks/useOrderFilters.js";
+import useDeleteOrder from "../hooks/useDeleteOrder.js";
 
-export default function OrdersPage({ orders, items }) {
+export default function OrdersPage({ items }) {
+  const { orders } = useOrders();
+  const filters = useOrderFilters(orders, items);
+  const deleteWithConfirmation = useDeleteOrder(items);
+  const [error, setError] = useState("");
+
+  function handleDelete(order) {
+    setError("");
+    const result = deleteWithConfirmation(order);
+    if (!result.ok && !result.cancelled) setError(result.message);
+  }
+
   return (
     <>
-      <PageHeading title="Список замовлень" />
-      <p>Нижче наведено локальні демонстраційні замовлення.</p>
+      <PageHeading title="Керування замовленнями" />
+      <p>
+        <Link to="/orders/new">Створити нове замовлення</Link>
+      </p>
+
+      <OrderFilters
+        query={filters.query}
+        sort={filters.sort}
+        onQueryChange={filters.setQuery}
+        onSortChange={filters.setSort}
+        onReset={filters.resetFilters}
+      />
+
+      <p style={{ marginBottom: "1rem", fontSize: "0.9rem", color: "#555" }}>
+        Показано: {filters.visibleOrders.length} із {orders.length}
+      </p>
+
+      {error && (
+        <p role="alert" className="field-error">
+          {error}
+        </p>
+      )}
 
       {orders.length === 0 ? (
         <EmptyState title="Замовлень ще немає.">
           <p>
-            <Link to="new">Оформити нове замовлення</Link>
+            <Link to="/products">Перейти до каталогу</Link>
           </p>
         </EmptyState>
+      ) : filters.visibleOrders.length === 0 ? (
+        <EmptyState title="За цими умовами нічого не знайдено.">
+          <AppButton variant="secondary" onClick={filters.resetFilters}>
+            Скинути умови
+          </AppButton>
+        </EmptyState>
       ) : (
-        <div className="table-scroll">
-          <table className="requests-table">
-            <caption>Замовлення для перевірки навігації</caption>
-            <thead>
-              <tr>
-                <th scope="col">Годинник</th>
-                <th scope="col">Мета / Коментар</th>
-                <th scope="col">Дія</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((order) => {
-                const item = items.find(
-                  (entry) => String(entry.id) === String(order.productId),
-                );
-                return (
-                  <tr key={order.id}>
-                    <td>{item?.title ?? "Товар відсутній у каталозі"}</td>
-                    <td>{order.purpose}</td>
-                    <td>
-                      <Link to={`${encodeURIComponent(order.id)}/edit`}>
-                        Редагувати {order.id}
-                      </Link>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        <OrderTable
+          orders={filters.visibleOrders}
+          items={items}
+          onDelete={handleDelete}
+        />
       )}
     </>
   );

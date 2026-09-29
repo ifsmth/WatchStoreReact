@@ -1,35 +1,23 @@
 export default function OrderSummary({ productTitle, draft }) {
-  const customerName = draft.customerName.trim();
-  const customerPhone = draft.customerPhone.trim();
-  const comment = draft.comment.trim();
-
   return (
-    <aside aria-labelledby="order-summary-title" className="empty-state">
-      <h3 id="order-summary-title">Поточна чернетка замовлення</h3>
+    <div className="order-summary">
+      <h3>Підсумок замовлення</h3>
       <dl>
-        <dt>
-          <strong>Товар:</strong>
-        </dt>
+        <dt>Товар</dt>
         <dd>{productTitle}</dd>
 
-        <dt>
-          <strong>Одержувач:</strong>
-        </dt>
-        <dd>{customerName || "Ще не вказано"}</dd>
+        <dt>Ім'я</dt>
+        <dd>{draft.customerName || "Ще не вказано"}</dd>
 
-        <dt>
-          <strong>Телефон:</strong>
-        </dt>
-        <dd>{customerPhone || "Ще не вказано"}</dd>
+        <dt>Телефон</dt>
+        <dd>{draft.phone || "Ще не вказано"}</dd>
 
-        <dt>
-          <strong>Коментар:</strong>
-        </dt>
-        <dd>{comment || "Немає коментарів"}</dd>
+        <dt>Кількість</dt>
+        <dd>{draft.quantity === "" ? "Ще не вказано" : draft.quantity}</dd>
+
+        <dt>Коментар</dt>
+        <dd>{draft.comment || "Немає"}</dd>
       </dl>
-      <p className="field-hint">
-        Цей підсумок не підтверджує резервування товару.
-      </p>
-    </aside>
+    </div>
   );
 }

@@ -1,51 +1,40 @@
-import { Link, useNavigate, useSearchParams } from "react-router";
-import PageHeading from "../components/ui/PageHeading.jsx";
-import EmptyState from "../components/ui/EmptyState.jsx";
+import { useNavigate } from "react-router";
 import { useProductSelection } from "../contexts/ProductSelectionContext.jsx";
-import NotFoundPage from "./NotFoundPage.jsx";
-// Використаємо нашу форму кошика, адаптовану під редагування
+import { useOrders } from "../contexts/OrdersContext.jsx";
 import CartPage from "./OrderPage.jsx";
+import NotFoundPage from "./NotFoundPage.jsx";
 
 export default function OrderCreatePage({ items }) {
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { selectedId, handleClearSelection } = useProductSelection();
+  const { createOrder } = useOrders();
 
-  const productId = searchParams.get("productId");
-
-  if (!productId) {
-    const lastSelectionSearch = selectedId
-      ? `?${new URLSearchParams({ productId: selectedId })}`
-      : null;
-
+  // Якщо товар не обрано, показуємо заглушку
+  if (!selectedId) {
     return (
-      <>
-        <PageHeading title="Нове замовлення" />
-        <EmptyState title="Спочатку виберіть товар у каталозі.">
-          <p>
-            <Link to="/products">Відкрити каталог</Link>
-          </p>
-          {lastSelectionSearch && (
-            <p>
-              <Link to={`/orders/new${lastSelectionSearch}`}>
-                Використати останній вибір
-              </Link>
-            </p>
-          )}
-        </EmptyState>
-      </>
+      <div style={{ padding: "2rem", textAlign: "center" }}>
+        <h2>Спершу оберіть товар</h2>
+        <button onClick={() => navigate("/products")}>
+          Перейти до каталогу
+        </button>
+      </div>
     );
   }
 
-  const item = items.find((entry) => String(entry.id) === String(productId));
+  const item = items.find((entry) => String(entry.id) === String(selectedId));
 
   if (!item) {
-    return (
-      <NotFoundPage
-        title="Неможливо оформити замовлення"
-        message="Товар із параметра productId відсутній у каталозі."
-      />
-    );
+    return <NotFoundPage title="Обладнання не знайдено" />;
+  }
+
+  function handleSave(input) {
+    const result = createOrder(input);
+    if (result.ok) {
+      navigate(`/orders/${encodeURIComponent(result.record.id)}`, {
+        replace: true,
+      });
+    }
+    return result;
   }
 
   function handleCancel() {
@@ -58,8 +47,10 @@ export default function OrderCreatePage({ items }) {
       key={`new-${item.id}`}
       title="Нове замовлення"
       item={item}
+      onSave={handleSave}
+      submitLabel="Створити замовлення"
       onCancel={handleCancel}
-      cancelLabel="Скасувати й очистити вибір"
+      cancelLabel="Скасувати чернетку й очистити вибір"
     />
   );
 }
