@@ -36,27 +36,19 @@ export default function OrderDetailsPage({ items }) {
         </p>
       )}
 
-      <dl style={{ marginBottom: "2rem" }}>
-        <dt>
-          <strong>Обладнання</strong>
-        </dt>
+      <dl className="details-list">
+        <dt>Обладнання</dt>
         <dd>{item?.title ?? "Товар відсутній у каталозі"}</dd>
 
-        <dt>
-          <strong>Замовник</strong>
-        </dt>
+        <dt>Замовник</dt>
         <dd>
           {order.customerName} ({order.phone})
         </dd>
 
-        <dt>
-          <strong>Кількість</strong>
-        </dt>
+        <dt>Кількість</dt>
         <dd>{order.quantity} шт.</dd>
 
-        <dt>
-          <strong>Коментар</strong>
-        </dt>
+        <dt>Коментар</dt>
         <dd>{order.comment || "Немає"}</dd>
       </dl>
 

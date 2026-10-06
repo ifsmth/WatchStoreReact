@@ -528,3 +528,147 @@ section {
     height: 17rem;
   }
 }
+
+/* =========================================
+   СТИЛІ ДЛЯ ПОМИЛОК ВАЛІДАЦІЇ
+   ========================================= */
+
+/* 1. Текст помилки (під полем та загальні повідомлення) */
+.field-error {
+  color: #d32f2f; /* Яскраво-червоний колір тексту */
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-top: 0.35rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* 2. Кругла іконка зі знаком оклику перед кожною помилкою */
+.field-error::before {
+  content: "!";
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 50%;
+  background-color: #d32f2f;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 900;
+  font-family: "DM Mono", monospace;
+  flex-shrink: 0;
+}
+
+/* 3. Головні повідомлення про помилку (зверху форми) у вигляді плашки */
+form > p[role="alert"].field-error {
+  background-color: #fff9f9;
+  border: 1px solid #ffcdd2;
+  border-left: 4px solid #d32f2f;
+  padding: 0.8rem 1rem;
+  color: #b71c1c;
+  font-size: 0.95rem;
+  width: 100%;
+  max-width: 36rem;
+  margin-block: 1rem;
+}
+
+/* 4. Підсвічування червоним самих полів вводу, які не пройшли валідацію */
+.form-field input[aria-invalid="true"],
+.form-field textarea[aria-invalid="true"] {
+  border: 2px solid #d32f2f;
+  background-color: #fffaf9; /* Ледь помітний червоний фон */
+}
+
+/* 5. Фокус на полі з помилкою (змінюємо колір стандартного outline) */
+.form-field input[aria-invalid="true"]:focus-visible,
+.form-field textarea[aria-invalid="true"]:focus-visible {
+  outline: 3px solid #ffcdd2;
+  outline-offset: 1px;
+}
+
+/* =========================================
+   СТИЛІ ДЛЯ ПОВІДОМЛЕНЬ (УСПІШНІ ОПЕРАЦІЇ)
+   ========================================= */
+
+.operation-notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background-color: #f1f8f4; /* Світло-зелений фон */
+  border: 1px solid #cce3d6;
+  border-left: 4px solid #27704a; /* Темно-зелений акцент, як у статусі "В наявності" */
+  padding: 1rem 1.25rem;
+  margin-block: 1.5rem;
+  color: #1b4d32;
+}
+
+/* Сам текст повідомлення */
+.operation-notice p[role="status"] {
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+/* Робимо кнопку "Закрити" трохи компактнішою */
+.operation-notice .app-button {
+  padding: 0.5rem 0.8rem;
+  font-size: 0.8rem;
+  background-color: transparent;
+  border-color: #27704a;
+  color: #27704a;
+}
+
+.operation-notice .app-button:hover {
+  background-color: #27704a;
+  color: white;
+}
+
+/* =========================================
+   СТИЛІ ДЛЯ ДЕТАЛЕЙ ЗАМОВЛЕННЯ (OrderDetailsPage)
+   ========================================= */
+
+.details-list {
+  display: grid;
+  grid-template-columns: minmax(130px, max-content) 1fr;
+  column-gap: 2rem;
+  row-gap: 1rem;
+  background-color: #fffefa;
+  border: 1px solid #dedbd3;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.details-list dt {
+  margin: 0;
+  font-weight: 700;
+  color: #686861;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  padding-top: 0.15rem; /* Трохи вирівнюємо з текстом dd */
+}
+
+.details-list dd {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #1d2224;
+  font-weight: 500;
+}
+
+/* Адаптивність: на вузьких екранах (телефонах) робимо в одну колонку */
+@media (max-width: 500px) {
+  .details-list {
+    grid-template-columns: 1fr;
+    row-gap: 0.25rem;
+  }
+  .details-list dt {
+    margin-top: 1rem;
+  }
+  .details-list dt:first-child {
+    margin-top: 0;
+  }
+}
