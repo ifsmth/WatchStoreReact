@@ -672,3 +672,189 @@ form > p[role="alert"].field-error {
     margin-top: 0;
   }
 }
+
+/* =========================================
+   РЕДИЗАЙН: НАВІГАЦІЯ ТА ІНФО-БАНЕРИ
+   ========================================= */
+
+/* Вкладки для розділу замовлень */
+.orders-nav {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #dedbd3;
+  flex-wrap: wrap;
+}
+
+.orders-nav a {
+  display: inline-block;
+  padding: 0.6rem 1.25rem;
+  background: #eeebe4;
+  color: #5d625e;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border-radius: 2rem; /* Округлі кнопки-таби */
+  transition: all 0.2s ease;
+}
+
+.orders-nav a:hover:not(.active) {
+  background: #e0ddd4;
+  color: #1d2224;
+}
+
+.orders-nav a.active {
+  background: #253432;
+  color: #fffefa;
+  box-shadow: 0 4px 10px rgba(37, 52, 50, 0.2);
+}
+
+/* Інформаційний банер ("Дані зберігаються локально...") */
+.info-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #e7e8e0;
+  color: #4a504a;
+  padding: 0.85rem 1.25rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  border-left: 4px solid #a06448;
+}
+
+/* =========================================
+   РЕДИЗАЙН: СТОРІНКА ОФОРМЛЕННЯ (CartPage)
+   ========================================= */
+
+.order-editor-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 2rem;
+  align-items: start;
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 850px) {
+  .order-editor-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Картка для форми */
+.order-form-container {
+  background: #fffefa;
+  padding: 2rem;
+  border: 1px solid #dedbd3;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+}
+
+.order-form-container p.note {
+  color: #686861;
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px dashed #dedbd3;
+}
+
+/* Картка для підсумку */
+.order-summary-container {
+  background: #253432;
+  color: #f9f6ee;
+  padding: 1.75rem;
+  position: sticky;
+  top: 1.5rem;
+}
+
+.order-summary-container h3 {
+  color: #e2ae79;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.35rem;
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #40514c;
+}
+
+.order-summary-container dt {
+  font-size: 0.75rem;
+  color: #a3aba8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 1.25rem;
+}
+
+.order-summary-container dd {
+  margin: 0.25rem 0 0 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #fff;
+  overflow-wrap: break-word;
+}
+
+/* =========================================
+   СТИЛІ ДЛЯ КНОПОК ДІЙ У ТАБЛИЦІ (OrderTable)
+   ========================================= */
+
+.table-actions {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 0.65rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+/* Кнопка "Деталі" (Нейтральна) */
+.action-btn-view {
+  color: #4a504a;
+  border-color: #dedbd3;
+  background: #fffefa;
+}
+.action-btn-view:hover {
+  background: #253432;
+  color: #fffefa;
+  border-color: #253432;
+}
+
+/* Кнопка "Редагувати" (Зелений акцент) */
+.action-btn-edit {
+  color: #27704a;
+  border-color: #cce3d6;
+  background: #f1f8f4;
+}
+.action-btn-edit:hover {
+  background: #27704a;
+  color: #fffefa;
+}
+
+/* Кнопка "Видалити" (Червоний акцент) */
+.action-btn-delete {
+  color: #d32f2f;
+  border-color: #ffcdd2;
+  background: #fff9f9;
+}
+.action-btn-delete:hover:not(:disabled) {
+  background: #d32f2f;
+  color: #fffefa;
+}
+
+/* Стан очікування під час видалення */
+.action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(100%);
+}

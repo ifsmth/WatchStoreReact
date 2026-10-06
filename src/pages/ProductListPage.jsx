@@ -39,7 +39,12 @@ export default function ProductListPage({ items, selectedId, onSelect }) {
           onSelect={onSelect}
         />
         <p style={{ marginTop: "1.5rem" }}>
-          <Link to={`/orders/new${orderSearch}`}>Оформити нове замовлення</Link>
+          <Link
+            to={`/orders/new${orderSearch}`}
+            className="app-button app-button-primary"
+          >
+            Оформити замовлення
+          </Link>
         </p>
       </Section>
     </>

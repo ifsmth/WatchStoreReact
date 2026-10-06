@@ -1,7 +1,6 @@
 import { Link } from "react-router";
-import AppButton from "../ui/AppButton.jsx";
 
-export default function OrderTable({ orders, items, onDelete }) {
+export default function OrderTable({ orders, items, onDelete, isMutating }) {
   return (
     <div className="table-scroll">
       <table className="requests-table">
@@ -30,21 +29,24 @@ export default function OrderTable({ orders, items, onDelete }) {
                 </td>
                 <td>{order.quantity} шт.</td>
                 <td>
-                  <div
-                    style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}
-                  >
-                    <Link to={path}>Деталі</Link>
-                    <Link to={`${path}/edit`}>Редагувати</Link>
+                  {/* Використовуємо нові класи для контейнера та кнопок */}
+                  <div className="table-actions">
+                    <Link to={path} className="action-btn action-btn-view">
+                      Деталі
+                    </Link>
+
+                    <Link
+                      to={`${path}/edit`}
+                      className="action-btn action-btn-edit"
+                    >
+                      Редагувати
+                    </Link>
+
                     <button
+                      type="button"
                       onClick={() => onDelete(order)}
-                      style={{
-                        background: "none",
-                        border: "none",
-                        color: "#c00",
-                        textDecoration: "underline",
-                        cursor: "pointer",
-                        padding: 0,
-                      }}
+                      className="action-btn action-btn-delete"
+                      disabled={isMutating}
                     >
                       Видалити
                     </button>

@@ -35,7 +35,9 @@ export default function OrdersPage({ items }) {
           marginBottom: "1.5rem",
         }}
       >
-        <Link to="/orders/new">Створити нове замовлення</Link>
+        <Link to="/orders/new" className="app-button app-button-primary">
+          Створити нове замовлення
+        </Link>
         {/* Кнопка оновлення */}
         <AppButton
           disabled={isMutating}

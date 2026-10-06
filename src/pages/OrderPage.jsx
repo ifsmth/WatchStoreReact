@@ -125,18 +125,15 @@ export default function CartPage({
   return (
     <>
       <PageHeading title={title} />
-      <Section id="request-editor" title="Поля та підсумок">
-        <p>
-          Обладнання «{item.title}»: <StockBadge stock={item.stock} />
-        </p>
 
-        <div
-          style={{
-            display: "grid",
-            gap: "2rem",
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-          }}
-        >
+      <div className="order-editor-layout">
+        {/* ЛІВА ЧАСТИНА: ФОРМА */}
+        <section className="order-form-container">
+          <p className="note">
+            Збережіть зміни кнопкою нижче. Незбережене введення зникає при
+            виході зі сторінки або її перезавантаженні.
+          </p>
+
           <fieldset
             disabled={isSubmitting}
             style={{ border: "none", padding: 0, margin: 0 }}
@@ -154,18 +151,28 @@ export default function CartPage({
               submitLabel={isSubmitting ? "Збереження..." : submitLabel}
             />
           </fieldset>
-          <OrderSummary productTitle={item.title} draft={draft} />
-        </div>
-      </Section>
 
-      <div style={{ marginTop: "2rem" }}>
-        <AppButton
-          variant="secondary"
-          onClick={handleCancel}
-          disabled={isSubmitting}
-        >
-          {cancelLabel}
-        </AppButton>
+          <div
+            style={{
+              marginTop: "2.5rem",
+              paddingTop: "1.5rem",
+              borderTop: "1px solid #dedbd3",
+            }}
+          >
+            <AppButton
+              variant="secondary"
+              onClick={handleCancel}
+              disabled={isSubmitting}
+            >
+              {cancelLabel}
+            </AppButton>
+          </div>
+        </section>
+
+        {/* ПРАВА ЧАСТИНА: ПІДСУМОК (ТЕМНА КАРТКА) */}
+        <aside>
+          <OrderSummary productTitle={item.title} draft={draft} item={item} />
+        </aside>
       </div>
     </>
   );

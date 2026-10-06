@@ -81,7 +81,9 @@ export default function OrderDetailsPage({ items }) {
       </div>
 
       <p>
-        <Link to="/orders">Повернутися до списку</Link>
+        <Link to="/orders" className="app-button app-button-primary">
+          Повернутися до списку
+        </Link>
       </p>
     </>
   );

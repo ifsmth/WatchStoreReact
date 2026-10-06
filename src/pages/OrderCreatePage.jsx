@@ -4,6 +4,7 @@ import { useProductSelection } from "../contexts/ProductSelectionContext.jsx";
 import { useOrders } from "../contexts/OrdersContext.jsx";
 import CartPage from "./OrderPage.jsx";
 import NotFoundPage from "./NotFoundPage.jsx";
+import AppButton from "../components/ui/AppButton.jsx";
 
 export default function OrderCreatePage({ items }) {
   const navigate = useNavigate();
@@ -22,11 +23,43 @@ export default function OrderCreatePage({ items }) {
   // Якщо товар не обрано, показуємо заглушку
   if (!selectedId) {
     return (
-      <div style={{ padding: "2rem", textAlign: "center" }}>
-        <h2>Спершу оберіть товар</h2>
-        <button onClick={() => navigate("/products")}>
+      <div
+        className="empty-state"
+        style={{
+          textAlign: "center",
+          marginBlock: "2rem",
+          paddingBlock: "4rem",
+        }}
+      >
+        <span
+          style={{
+            fontSize: "3.5rem",
+            display: "block",
+            marginBottom: "1rem",
+            opacity: 0.8,
+          }}
+        >
+          ⌚
+        </span>
+        <h2 style={{ fontSize: "1.6rem", marginBottom: "1rem" }}>
+          Спершу оберіть товар
+        </h2>
+        <p
+          style={{
+            color: "#686861",
+            marginBottom: "2rem",
+            maxWidth: "400px",
+            mx: "auto",
+            display: "inline-block",
+          }}
+        >
+          Для оформлення нового замовлення необхідно вибрати годинник з нашого
+          каталогу.
+        </p>
+        <br />
+        <AppButton onClick={() => navigate("/products")}>
           Перейти до каталогу
-        </button>
+        </AppButton>
       </div>
     );
   }
