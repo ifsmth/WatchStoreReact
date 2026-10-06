@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from "react-router";
+import { useRef, useEffect } from "react";
 import { useOrders } from "../contexts/OrdersContext.jsx";
 import CartPage from "./OrderPage.jsx";
 import NotFoundPage from "./NotFoundPage.jsx";
@@ -9,6 +10,22 @@ export default function OrderEditPage({ items }) {
   const { orders, updateOrder } = useOrders();
 
   const order = orders.find((entry) => entry.id === orderId);
+
+  const pageAlive = useRef(false);
+  useEffect(() => {
+    pageAlive.current = true;
+    return () => {
+      pageAlive.current = false;
+    };
+  }, []);
+
+  const activeId = useRef(orderId);
+  useEffect(() => {
+    activeId.current = orderId;
+    return () => {
+      activeId.current = null;
+    };
+  }, [orderId]);
 
   if (!order) {
     return <NotFoundPage title="Замовлення не знайдено" />;
@@ -22,9 +39,10 @@ export default function OrderEditPage({ items }) {
     return <NotFoundPage title="Товар замовлення відсутній" />;
   }
 
-  function handleSave(input) {
-    const result = updateOrder(order.id, input);
-    if (result.ok) {
+  async function handleSave(input) {
+    const result = await updateOrder(order.id, input);
+    // Перевіряємо, чи сторінка активна і чи ID не змінився
+    if (result.ok && pageAlive.current && activeId.current === order.id) {
       navigate(`/orders/${encodeURIComponent(result.record.id)}`, {
         replace: true,
       });

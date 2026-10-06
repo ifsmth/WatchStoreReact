@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import PageHeading from "../components/ui/PageHeading.jsx";
 import Section from "../components/ui/Section.jsx";
 import AppButton from "../components/ui/AppButton.jsx";
@@ -29,6 +29,16 @@ export default function CartPage({
   const [touched, setTouched] = useState({});
   const [attempted, setAttempted] = useState(false);
   const [operationError, setOperationError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submitting = useRef(false);
+  const alive = useRef(false); // Захист від оновлення стану після переходу
+
+  useEffect(() => {
+    alive.current = true;
+    return () => {
+      alive.current = false;
+    };
+  }, []);
 
   // Валідуємо поточні значення на кожний рендер
   const validation = validateOrder({ ...draft, productId: item.id }, [item]);
@@ -55,13 +65,13 @@ export default function CartPage({
     setTouched((previous) => ({ ...previous, [field]: true }));
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
+    if (submitting.current) return;
     setAttempted(true);
     setOperationError("");
 
     if (!validation.ok) {
-      // Шукаємо перше поле з помилкою і фокусуємося на ньому
       const firstField = ["customerName", "phone", "quantity", "comment"].find(
         (field) => validation.errors[field],
       );
@@ -71,15 +81,28 @@ export default function CartPage({
       return;
     }
 
-    const result = onSave(validation.value);
-    if (!result.ok) {
-      setOperationError(
-        result.message || Object.values(result.errors).join(" "),
-      );
+    submitting.current = true;
+    setIsSubmitting(true);
+
+    try {
+      const result = await onSave(validation.value);
+      if (!result.ok && alive.current) {
+        setOperationError(
+          result.errors
+            ? Object.values(result.errors).join(" ")
+            : result.message || "Не вдалося зберегти замовлення.",
+        );
+      }
+    } catch {
+      if (alive.current) setOperationError("Не вдалося завершити збереження.");
+    } finally {
+      submitting.current = false;
+      if (alive.current) setIsSubmitting(false);
     }
   }
 
   function handleReset() {
+    if (submitting.current) return;
     if (!isDirty) return;
     if (
       window.confirm("Відкинути введені зміни та відновити початкові поля?")
@@ -92,6 +115,7 @@ export default function CartPage({
   }
 
   function handleCancel() {
+    if (submitting.current) return;
     if (isDirty && !window.confirm("Вийти та відкинути незбережені зміни?")) {
       return;
     }
@@ -113,24 +137,33 @@ export default function CartPage({
             gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
           }}
         >
-          <OrderForm
-            idPrefix="order-draft"
-            productTitle={item.title}
-            draft={draft}
-            errors={errors}
-            operationError={operationError}
-            onDraftChange={handleChange}
-            onBlur={handleBlur}
-            onSubmit={handleSubmit}
-            onReset={handleReset}
-            submitLabel={submitLabel}
-          />
+          <fieldset
+            disabled={isSubmitting}
+            style={{ border: "none", padding: 0, margin: 0 }}
+          >
+            <OrderForm
+              idPrefix="order-draft"
+              productTitle={item.title}
+              draft={draft}
+              errors={errors}
+              operationError={operationError}
+              onDraftChange={handleChange}
+              onBlur={handleBlur}
+              onSubmit={handleSubmit}
+              onReset={handleReset}
+              submitLabel={isSubmitting ? "Збереження..." : submitLabel}
+            />
+          </fieldset>
           <OrderSummary productTitle={item.title} draft={draft} />
         </div>
       </Section>
 
       <div style={{ marginTop: "2rem" }}>
-        <AppButton variant="secondary" onClick={handleCancel}>
+        <AppButton
+          variant="secondary"
+          onClick={handleCancel}
+          disabled={isSubmitting}
+        >
           {cancelLabel}
         </AppButton>
       </div>

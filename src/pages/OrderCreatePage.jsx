@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router";
+import { useRef, useEffect } from "react";
 import { useProductSelection } from "../contexts/ProductSelectionContext.jsx";
 import { useOrders } from "../contexts/OrdersContext.jsx";
 import CartPage from "./OrderPage.jsx";
@@ -8,6 +9,15 @@ export default function OrderCreatePage({ items }) {
   const navigate = useNavigate();
   const { selectedId, handleClearSelection } = useProductSelection();
   const { createOrder } = useOrders();
+
+  // Захист від переходів, якщо компонент уже демонтовано
+  const pageAlive = useRef(false);
+  useEffect(() => {
+    pageAlive.current = true;
+    return () => {
+      pageAlive.current = false;
+    };
+  }, []);
 
   // Якщо товар не обрано, показуємо заглушку
   if (!selectedId) {
@@ -27,9 +37,9 @@ export default function OrderCreatePage({ items }) {
     return <NotFoundPage title="Обладнання не знайдено" />;
   }
 
-  function handleSave(input) {
-    const result = createOrder(input);
-    if (result.ok) {
+  async function handleSave(input) {
+    const result = await createOrder(input); // Чекаємо на відповідь
+    if (result.ok && pageAlive.current) {
       navigate(`/orders/${encodeURIComponent(result.record.id)}`, {
         replace: true,
       });

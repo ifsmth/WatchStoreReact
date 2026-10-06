@@ -24,7 +24,7 @@ import { orders } from "./data/orders.js";
 export default function App() {
   return (
     <ProductSelectionProvider>
-      <OrdersProvider items={products}>
+      <OrdersProvider>
         <Routes>
           {/* Головна оболонка застосунку, яка має <Outlet /> */}
           <Route path="/" element={<AppLayout />}>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import PageHeading from "../components/ui/PageHeading.jsx";
 import AppButton from "../components/ui/AppButton.jsx";
@@ -9,9 +9,17 @@ import NotFoundPage from "./NotFoundPage.jsx";
 export default function OrderDetailsPage({ items }) {
   const { orderId } = useParams();
   const navigate = useNavigate();
-  const { orders } = useOrders();
+  const { orders, isMutating } = useOrders();
   const deleteWithConfirmation = useDeleteOrder(items);
   const [error, setError] = useState("");
+
+  const pageAlive = useRef(false);
+  useEffect(() => {
+    pageAlive.current = true;
+    return () => {
+      pageAlive.current = false;
+    };
+  }, []);
 
   const order = orders.find((entry) => entry.id === orderId);
   if (!order) return <NotFoundPage title="Замовлення не знайдено" />;
@@ -20,11 +28,18 @@ export default function OrderDetailsPage({ items }) {
     (entry) => String(entry.id) === String(order.productId),
   );
 
-  function handleDelete() {
+  async function handleDelete() {
+    if (isMutating) return;
     setError("");
-    const result = deleteWithConfirmation(order);
-    if (result.ok) navigate("/orders", { replace: true });
-    else if (!result.cancelled) setError(result.message);
+
+    const result = await deleteWithConfirmation(order);
+    if (!pageAlive.current) return;
+
+    if (result.ok) {
+      navigate("/orders", { replace: true });
+    } else if (!result.cancelled) {
+      setError(result.message);
+    }
   }
 
   return (
@@ -56,8 +71,12 @@ export default function OrderDetailsPage({ items }) {
         <Link to={`/orders/${encodeURIComponent(order.id)}/edit`}>
           <AppButton>Редагувати замовлення</AppButton>
         </Link>
-        <AppButton variant="secondary" onClick={handleDelete}>
-          Видалити замовлення
+        <AppButton
+          variant="secondary"
+          onClick={handleDelete}
+          disabled={isMutating}
+        >
+          {isMutating ? "Опрацювання зміни…" : "Видалити замовлення"}
         </AppButton>
       </div>
 

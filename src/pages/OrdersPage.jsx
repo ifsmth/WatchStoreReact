@@ -10,23 +10,41 @@ import useOrderFilters from "../hooks/useOrderFilters.js";
 import useDeleteOrder from "../hooks/useDeleteOrder.js";
 
 export default function OrdersPage({ items }) {
-  const { orders } = useOrders();
+  // Дістаємо reload та isMutating з контексту
+  const { orders, reload, isMutating } = useOrders();
   const filters = useOrderFilters(orders, items);
   const deleteWithConfirmation = useDeleteOrder(items);
   const [error, setError] = useState("");
 
-  function handleDelete(order) {
+  async function handleDelete(order) {
+    if (isMutating) return;
     setError("");
-    const result = deleteWithConfirmation(order);
+    const result = await deleteWithConfirmation(order);
     if (!result.ok && !result.cancelled) setError(result.message);
   }
 
   return (
     <>
       <PageHeading title="Керування замовленнями" />
-      <p>
+
+      <div
+        style={{
+          display: "flex",
+          gap: "1rem",
+          alignItems: "center",
+          marginBottom: "1.5rem",
+        }}
+      >
         <Link to="/orders/new">Створити нове замовлення</Link>
-      </p>
+        {/* Кнопка оновлення */}
+        <AppButton
+          disabled={isMutating}
+          onClick={() => void reload()}
+          variant="secondary"
+        >
+          Оновити дані
+        </AppButton>
+      </div>
 
       <OrderFilters
         query={filters.query}

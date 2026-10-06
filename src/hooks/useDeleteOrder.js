@@ -3,7 +3,7 @@ import { useOrders } from "../contexts/OrdersContext.jsx";
 export default function useDeleteOrder(items) {
   const { deleteOrder } = useOrders();
 
-  return function deleteWithConfirmation(order) {
+  return async function deleteWithConfirmation(order) {
     const item = items.find(
       (entry) => String(entry.id) === String(order.productId),
     );
@@ -14,6 +14,6 @@ export default function useDeleteOrder(items) {
     );
 
     if (!confirmed) return { ok: false, cancelled: true };
-    return deleteOrder(order.id);
+    return await deleteOrder(order.id);
   };
 }

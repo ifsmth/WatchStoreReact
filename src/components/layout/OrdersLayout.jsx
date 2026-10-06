@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from "react-router";
-import OrderNotice from "../orders/OrderNotice";
+import OrderNotice from "../orders/OrderNotice.jsx";
+import OrdersGate from "../orders/OrdersGate.jsx";
 
 export default function OrdersLayout() {
   return (
@@ -20,10 +21,14 @@ export default function OrdersLayout() {
         </ul>
       </nav>
 
-      <p>Локальні дані зберігаються до перезавантаження сторінки.</p>
+      {/* Оновлене пояснення: */}
+      <p>Дані зберігаються локально у пам'яті браузера (localStorage).</p>
       <OrderNotice />
 
-      <Outlet />
+      {/* Захищаємо вкладені сторінки від рендеру, поки йде завантаження */}
+      <OrdersGate>
+        <Outlet />
+      </OrdersGate>
     </>
   );
 }
