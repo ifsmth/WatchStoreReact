@@ -529,6 +529,18 @@ section {
   }
 }
 
+.catalog-order-action {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+
+.catalog-order-action .field-hint {
+  margin: 0;
+}
+
 /* =========================================
    СТИЛІ ДЛЯ ПОМИЛОК ВАЛІДАЦІЇ
    ========================================= */

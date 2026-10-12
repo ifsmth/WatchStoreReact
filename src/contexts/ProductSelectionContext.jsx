@@ -1,26 +1,30 @@
-import { createContext, useState, useContext } from "react";
+import { createContext, useContext } from "react";
+import { useSearchParams } from "react-router";
 import { products } from "../data/products.js";
 
-// 1. Створення об'єкта контексту
 const ProductSelectionContext = createContext(undefined);
 
-// 2. Провайдер стану
 export function ProductSelectionProvider({ children }) {
-  const [selectedId, setSelectedId] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const urlProductId = searchParams.get("productId");
+  const selectedId = urlProductId ? Number(urlProductId) : null;
 
   const selectedItem = products.find((item) => item.id === selectedId);
 
   function handleSelect(id) {
     if (products.some((item) => item.id === id)) {
-      setSelectedId(id);
+      const params = new URLSearchParams(searchParams);
+      params.set("productId", String(id));
+      setSearchParams(params);
     }
   }
 
   function handleClearSelection() {
-    setSelectedId(null);
+    const params = new URLSearchParams(searchParams);
+    params.delete("productId");
+    setSearchParams(params);
   }
 
-  // Передаємо стан та функції в контекст
   const contextValue = {
     selectedId,
     selectedItem,
@@ -35,17 +39,13 @@ export function ProductSelectionProvider({ children }) {
   );
 }
 
-// 3. Кастомний хук із перевіркою на помилки інтеграції
-// Контекст і хук мають бути поруч, щоб не дублювати його внутрішній об'єкт.
 // eslint-disable-next-line react-refresh/only-export-components
 export function useProductSelection() {
   const context = useContext(ProductSelectionContext);
-
   if (context === undefined) {
     throw new Error(
       "useProductSelection необхідно використовувати всередині ProductSelectionProvider",
     );
   }
-
   return context;
 }
