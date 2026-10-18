@@ -1,43 +1,71 @@
 import { useState } from "react";
+import { Link } from "react-router"; // Додано імпорт Link
 import StockBadge from "./StockBadge.jsx";
 import AppButton from "../ui/AppButton.jsx";
 import ProductImage from "./ProductImage.jsx";
-import { getMainProductPhoto } from "../../data/product_photos.js";
+import { getMainProductPhoto } from "../../data/product_photos.js"; // Перевір шлях, можливо треба підправити
 
 export default function ProductCard({ item, selected, onSelect }) {
-  // Локальний стан для розгортання опису
   const [detailsOpen, setDetailsOpen] = useState(false);
-
-  // Унікальний ID для зв'язку кнопки розгортання з блоком тексту
   const descriptionId = `product-${item.id}-description`;
-  const mainPhoto = getMainProductPhoto(item.id);
+
+  // Безпечне отримання фото (якщо файлу product_photos немає, фото просто не покажеться)
+  let mainPhoto = null;
+  try {
+    mainPhoto = getMainProductPhoto(item.id);
+  } catch (e) {
+    /* Ігноруємо, якщо функції ще немає */
+  }
 
   return (
     <article className="product-card">
       <div className="product-card-image">
-        <ProductImage src={mainPhoto?.image_url} alt={item.title} />
+        {mainPhoto ? (
+          <ProductImage src={mainPhoto?.image_url} alt={item.title} />
+        ) : (
+          <div className="product-image-placeholder">
+            <span>⌚</span>
+            <small>Фото очікується</small>
+          </div>
+        )}
+
         {item.stock === 0 && (
           <span className="sold-out-label">Немає в наявності</span>
         )}
       </div>
+
       <div className="product-card-content">
-        <h3>{item.title}</h3>
+        {/* Робимо заголовок клікабельним */}
+        <Link to={`/products/${item.id}`} style={{ textDecoration: "none" }}>
+          <h3
+            style={{ color: "#1d2224", transition: "color 0.2s" }}
+            onMouseOver={(e) => (e.target.style.color = "#bd5c38")}
+            onMouseOut={(e) => (e.target.style.color = "#1d2224")}
+          >
+            {item.title}
+          </h3>
+        </Link>
+
         <p className="price">
           <strong>{item.price.toLocaleString("uk-UA")} ₴</strong>
         </p>
 
         <ul className="details" style={{ listStyleType: "none", padding: 0 }}>
           <li>
+            <strong>Бренд:</strong>{" "}
+            {item.brand_id === 1
+              ? "Casio"
+              : item.brand_id === 2
+                ? "Tissot"
+                : item.brand_id === 3
+                  ? "Orient"
+                  : "Інший"}
+          </li>
+          <li>
             <strong>Стать:</strong> {item.gender}
           </li>
           <li>
             <strong>Механізм:</strong> {item.mechanism}
-          </li>
-          <li>
-            <strong>Скло:</strong> {item.glass}
-          </li>
-          <li>
-            <strong>Водозахист:</strong> {item.water_resistance}
           </li>
         </ul>
 
@@ -45,29 +73,29 @@ export default function ProductCard({ item, selected, onSelect }) {
           <StockBadge stock={item.stock} />
         </p>
 
-        {/* Кнопка керування локальним станом */}
-        <AppButton
-          variant="secondary"
-          aria-expanded={detailsOpen}
-          aria-controls={descriptionId}
-          onClick={() => setDetailsOpen((previous) => !previous)}
+        {/* Кнопки дій */}
+        <div
+          className="card-actions"
+          style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
         >
-          {detailsOpen ? "Згорнути опис" : "Показати опис"}
-        </AppButton>
+          {/* Кнопка переходу на детальну сторінку */}
+          <Link
+            className="app-button app-button-secondary"
+            to={`/products/${item.id}`}
+          >
+            Переглянути деталі
+          </Link>
 
-        {/* Прихований/відкритий текст опису */}
-        <p id={descriptionId} hidden={!detailsOpen} className="description">
-          {item.description}
-        </p>
-
-        {/* Кнопка вибору товару для замовлення */}
-        <p className="card-actions">
-          <AppButton aria-pressed={selected} onClick={() => onSelect(item.id)}>
-            Вибрати «{item.title}»
-          </AppButton>
-        </p>
-
-        {selected && <p className="selection-note">Обрано для замовлення.</p>}
+          {/* Кнопка кошика (поки що використовує старий onSelect, пізніше переробимо на реальний кошик) */}
+          {onSelect && item.stock > 0 && (
+            <AppButton
+              aria-pressed={selected}
+              onClick={() => onSelect(item.id)}
+            >
+              {selected ? "✓ В кошику" : "Додати до кошика"}
+            </AppButton>
+          )}
+        </div>
       </div>
     </article>
   );

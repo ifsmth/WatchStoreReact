@@ -4,7 +4,8 @@ import SiteHeader from "./SiteHeader.jsx";
 const navigationLinks = [
   { to: "/", label: "Головна", end: true },
   { to: "/products", label: "Каталог" },
-  { to: "/orders", label: "Замовлення" },
+  { to: "/about", label: "Про нас" },
+  { to: "/orders", label: "Замовлення (тимчасово)" }, // Потім замінимо на Кошик та Кабінет
 ];
 
 export default function AppLayout() {
