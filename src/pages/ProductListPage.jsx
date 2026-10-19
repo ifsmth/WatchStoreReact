@@ -38,23 +38,6 @@ export default function ProductListPage({ items, selectedId, onSelect }) {
           selectedId={selectedId}
           onSelect={onSelect}
         />
-        <div className="catalog-order-action">
-          {selectedId ? (
-            <Link
-              to={`/orders/new${orderSearch}`}
-              className="app-button app-button-primary"
-            >
-              Оформити замовлення
-            </Link>
-          ) : (
-            <>
-              <button className="app-button app-button-primary" type="button" disabled>
-                Оформити замовлення
-              </button>
-              <p className="field-hint">Спершу виберіть годинник у каталозі.</p>
-            </>
-          )}
-        </div>
       </Section>
     </>
   );

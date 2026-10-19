@@ -5,7 +5,7 @@ const navigationLinks = [
   { to: "/", label: "Головна", end: true },
   { to: "/products", label: "Каталог" },
   { to: "/about", label: "Про нас" },
-  { to: "/orders", label: "Замовлення (тимчасово)" }, // Потім замінимо на Кошик та Кабінет
+  // { to: "/orders", label: "Замовлення (тимчасово)" }, // Потім замінимо на Кошик та Кабінет
 ];
 
 export default function AppLayout() {

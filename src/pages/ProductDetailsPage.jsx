@@ -43,7 +43,7 @@ export default function ProductDetailsPage({ items }) {
   const handleAddToCart = () => {
     addToCart(product, quantity);
     setShowNotice(true);
-    // Ховаємо повідомлення через 5 секунд
+    // Ховаємо повідомлення через 5 секунд (на випадок якщо юзер не натисне кнопки)
     setTimeout(() => setShowNotice(false), 5000);
   };
 
@@ -62,7 +62,6 @@ export default function ProductDetailsPage({ items }) {
               </div>
             )}
           </div>
-          {/* Тут у майбутньому можна додати map для мініатюр */}
         </div>
 
         {/* Блок з інформацією */}
@@ -127,12 +126,13 @@ export default function ProductDetailsPage({ items }) {
                   <Link to="/cart" className="app-button app-button-primary">
                     Перейти до кошика
                   </Link>
-                  <AppButton
-                    variant="secondary"
-                    onClick={() => setShowNotice(false)}
+                  {/* ОСЬ ТУТ ЗМІНА: тепер це Link, який веде на /products */}
+                  <Link
+                    to="/products"
+                    className="app-button app-button-secondary"
                   >
                     Продовжити покупки
-                  </AppButton>
+                  </Link>
                 </div>
               </div>
             ) : (

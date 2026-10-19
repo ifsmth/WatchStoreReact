@@ -1,6 +1,6 @@
 import { Link, NavLink } from "react-router";
 import { useCart } from "../../contexts/CartContext.jsx";
-import { useAuth } from "../../contexts/AuthContext.jsx"; // Додано
+import { useAuth } from "../../contexts/AuthContext.jsx";
 
 export default function SiteHeader({ title, links }) {
   const { cartCount } = useCart();

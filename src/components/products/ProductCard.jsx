@@ -1,20 +1,28 @@
 import { useState } from "react";
-import { Link } from "react-router"; // Додано імпорт Link
+import { Link } from "react-router";
 import StockBadge from "./StockBadge.jsx";
 import AppButton from "../ui/AppButton.jsx";
 import ProductImage from "./ProductImage.jsx";
-import { getMainProductPhoto } from "../../data/product_photos.js"; // Перевір шлях, можливо треба підправити
+import { getMainProductPhoto } from "../../data/product_photos.js";
+import { useCart } from "../../contexts/CartContext.jsx";
 
-export default function ProductCard({ item, selected, onSelect }) {
+// Ми прибрали selected та onSelect з props, бо картка тепер сама керує кошиком
+export default function ProductCard({ item }) {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const descriptionId = `product-${item.id}-description`;
 
-  // Безпечне отримання фото (якщо файлу product_photos немає, фото просто не покажеться)
+  const { cartItems, addToCart } = useCart(); // Отримуємо функції кошика
+
+  // Перевіряємо, чи є вже цей товар у кошику
+  const isInCart = cartItems.some(
+    (cartItem) => cartItem.product.id === item.id,
+  );
+
   let mainPhoto = null;
   try {
     mainPhoto = getMainProductPhoto(item.id);
   } catch (e) {
-    /* Ігноруємо, якщо функції ще немає */
+    /* Ігноруємо */
   }
 
   return (
@@ -35,7 +43,6 @@ export default function ProductCard({ item, selected, onSelect }) {
       </div>
 
       <div className="product-card-content">
-        {/* Робимо заголовок клікабельним */}
         <Link to={`/products/${item.id}`} style={{ textDecoration: "none" }}>
           <h3
             style={{ color: "#1d2224", transition: "color 0.2s" }}
@@ -73,12 +80,10 @@ export default function ProductCard({ item, selected, onSelect }) {
           <StockBadge stock={item.stock} />
         </p>
 
-        {/* Кнопки дій */}
         <div
           className="card-actions"
           style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
         >
-          {/* Кнопка переходу на детальну сторінку */}
           <Link
             className="app-button app-button-secondary"
             to={`/products/${item.id}`}
@@ -86,13 +91,18 @@ export default function ProductCard({ item, selected, onSelect }) {
             Переглянути деталі
           </Link>
 
-          {/* Кнопка кошика (поки що використовує старий onSelect, пізніше переробимо на реальний кошик) */}
-          {onSelect && item.stock > 0 && (
+          {/* НОВА РОБОЧА КНОПКА КОШИКА */}
+          {item.stock > 0 && (
             <AppButton
-              aria-pressed={selected}
-              onClick={() => onSelect(item.id)}
+              aria-pressed={isInCart}
+              onClick={() => addToCart(item, 1)}
+              style={{
+                backgroundColor: isInCart ? "#27704a" : "", // Робимо зеленою, якщо вже в кошику
+                borderColor: isInCart ? "#27704a" : "",
+                color: isInCart ? "white" : "",
+              }}
             >
-              {selected ? "✓ В кошику" : "Додати до кошика"}
+              {isInCart ? "✓ В кошику (Додати ще)" : "Додати до кошика"}
             </AppButton>
           )}
         </div>
