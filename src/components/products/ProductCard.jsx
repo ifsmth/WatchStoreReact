@@ -1,110 +1,136 @@
 import { useState } from "react";
-import { Link } from "react-router";
-import StockBadge from "./StockBadge.jsx";
-import AppButton from "../ui/AppButton.jsx";
-import ProductImage from "./ProductImage.jsx";
-import { getMainProductPhoto } from "../../data/product_photos.js";
+import { Link, useNavigate } from "react-router";
+import { Star, ShoppingCart, Eye, CheckCircle2 } from "lucide-react";
 import { useCart } from "../../contexts/CartContext.jsx";
 
-// Ми прибрали selected та onSelect з props, бо картка тепер сама керує кошиком
-export default function ProductCard({ item }) {
-  const [detailsOpen, setDetailsOpen] = useState(false);
-  const descriptionId = `product-${item.id}-description`;
+export default function ProductCard({ item, onAddToCartFeedback }) {
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
+  const [justAdded, setJustAdded] = useState(false);
 
-  const { cartItems, addToCart } = useCart(); // Отримуємо функції кошика
+  const product = item;
+  const imageSrc =
+    product.images?.[0] ||
+    product.image ||
+    "https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&q=80&w=600";
 
-  // Перевіряємо, чи є вже цей товар у кошику
-  const isInCart = cartItems.some(
-    (cartItem) => cartItem.product.id === item.id,
-  );
+  const handleAdd = (e) => {
+    e.stopPropagation();
+    addToCart(product, 1);
+    setJustAdded(true);
+    if (onAddToCartFeedback) {
+      onAddToCartFeedback(
+        `«${product.title || product.name}» додано до кошика!`,
+      );
+    }
+    setTimeout(() => setJustAdded(false), 2000);
+  };
 
-  let mainPhoto = null;
-  try {
-    mainPhoto = getMainProductPhoto(item.id);
-  } catch (e) {
-    /* Ігноруємо */
-  }
+  const handleCardClick = () => {
+    navigate(`/products/${product.id}`);
+  };
 
   return (
-    <article className="product-card">
-      <div className="product-card-image">
-        {mainPhoto ? (
-          <ProductImage src={mainPhoto?.image_url} alt={item.title} />
-        ) : (
-          <div className="product-image-placeholder">
-            <span>⌚</span>
-            <small>Фото очікується</small>
-          </div>
-        )}
-
-        {item.stock === 0 && (
-          <span className="sold-out-label">Немає в наявності</span>
-        )}
+    <article className="chrono-product-card">
+      {/* Product Image Area */}
+      <div className="chrono-product-photo-box" onClick={handleCardClick}>
+        <div className="chrono-product-rating">
+          <Star size={14} fill="#f59e0b" color="#f59e0b" />
+          <span>{product.rating ?? "4.9"}</span>
+        </div>
+        <img
+          src={imageSrc}
+          alt={product.title || product.name}
+          className="chrono-product-img"
+          loading="lazy"
+        />
       </div>
 
-      <div className="product-card-content">
-        <Link to={`/products/${item.id}`} style={{ textDecoration: "none" }}>
-          <h3
-            style={{ color: "#1d2224", transition: "color 0.2s" }}
-            onMouseOver={(e) => (e.target.style.color = "#bd5c38")}
-            onMouseOut={(e) => (e.target.style.color = "#1d2224")}
-          >
-            {item.title}
-          </h3>
-        </Link>
+      {/* Product Information */}
+      <div className="chrono-product-info">
+        <div className="chrono-product-brand">
+          {product.brand || "Швейцарія"}
+        </div>
 
-        <p className="price">
-          <strong>{item.price.toLocaleString("uk-UA")} ₴</strong>
-        </p>
-
-        <ul className="details" style={{ listStyleType: "none", padding: 0 }}>
-          <li>
-            <strong>Бренд:</strong>{" "}
-            {item.brand_id === 1
-              ? "Casio"
-              : item.brand_id === 2
-                ? "Tissot"
-                : item.brand_id === 3
-                  ? "Orient"
-                  : "Інший"}
-          </li>
-          <li>
-            <strong>Стать:</strong> {item.gender}
-          </li>
-          <li>
-            <strong>Механізм:</strong> {item.mechanism}
-          </li>
-        </ul>
-
-        <p>
-          <StockBadge stock={item.stock} />
-        </p>
-
-        <div
-          className="card-actions"
-          style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
+        <h3
+          className="chrono-product-title"
+          onClick={handleCardClick}
+          title={product.title || product.name}
         >
-          <Link
-            className="app-button app-button-secondary"
-            to={`/products/${item.id}`}
-          >
-            Переглянути деталі
-          </Link>
+          {product.title || product.name}
+        </h3>
 
-          {/* НОВА РОБОЧА КНОПКА КОШИКА */}
-          {item.stock > 0 && (
-            <AppButton
-              aria-pressed={isInCart}
-              onClick={() => addToCart(item, 1)}
-              style={{
-                backgroundColor: isInCart ? "#27704a" : "", // Робимо зеленою, якщо вже в кошику
-                borderColor: isInCart ? "#27704a" : "",
-                color: isInCart ? "white" : "",
-              }}
-            >
-              {isInCart ? "✓ В кошику (Додати ще)" : "Додати до кошика"}
-            </AppButton>
+        <p className="chrono-product-desc">
+          {product.description ||
+            "Класичний дизайн, надійний механізм та відмінна точність ходу."}
+        </p>
+
+        {/* Price */}
+        <div className="chrono-product-price">
+          {Number(product.price).toLocaleString("uk-UA")} ₴
+        </div>
+
+        {/* Specs Box */}
+        <div className="chrono-product-specs">
+          <div className="chrono-spec-row">
+            <span className="chrono-spec-label">Стать:</span>
+            <span>{product.gender || "Унісекс"}</span>
+          </div>
+          <div className="chrono-spec-row">
+            <span className="chrono-spec-label">Механізм:</span>
+            <span>{product.mechanism || "Механічний"}</span>
+          </div>
+          {product.glass && (
+            <div className="chrono-spec-row">
+              <span className="chrono-spec-label">Скло:</span>
+              <span>{product.glass}</span>
+            </div>
           )}
+        </div>
+
+        {/* Stock Status */}
+        <div className="chrono-stock-status">
+          <span
+            className="chrono-stock-dot"
+            style={{
+              backgroundColor: product.stock > 0 ? "#10b981" : "#ef4444",
+            }}
+          />
+          {product.stock > 0
+            ? `В наявності (${product.stock} шт.)`
+            : "Тимчасово немає в наявності"}
+        </div>
+
+        {/* Actions */}
+        <div className="chrono-card-actions">
+          <button
+            type="button"
+            onClick={handleAdd}
+            disabled={product.stock === 0}
+            className="chrono-btn-add-cart"
+            style={{
+              backgroundColor: justAdded
+                ? "var(--chrono-emerald-700)"
+                : product.stock === 0
+                  ? "#9ca3af"
+                  : "",
+              cursor: product.stock === 0 ? "not-allowed" : "pointer",
+            }}
+          >
+            {justAdded ? (
+              <>
+                <CheckCircle2 size={16} /> Додано!
+              </>
+            ) : (
+              <>
+                <ShoppingCart size={16} /> Додати до кошика
+              </>
+            )}
+          </button>
+
+          <Link to={`/products/${product.id}`} className="chrono-btn-details">
+            <Eye size={15} color="#d97706" /> Детальніше
+          </Link>
         </div>
       </div>
     </article>

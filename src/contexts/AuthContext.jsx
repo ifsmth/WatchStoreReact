@@ -22,15 +22,17 @@ export function AuthProvider({ children }) {
   });
 
   // ЛОГІКА ВХОДУ (з жорстким розділенням ролей)
-  const login = (email, password, requestedRole = "user") => {
-    // 1. Шукаємо користувача
+  const login = (emailOrPhone, password, requestedRole = "user") => {
+    // 1. Шукаємо користувача за email або телефоном
     const foundUser = usersDB.find(
-      (u) => u.email === email && u.password_hash === password,
+      (u) =>
+        (u.email === emailOrPhone || u.phone_number === emailOrPhone) &&
+        u.password_hash === password,
     );
 
     // 2. Якщо не знайдено (невірний логін або пароль)
     if (!foundUser) {
-      return { success: false, message: "Невірний email або пароль." };
+      return { success: false, message: "Невірний email/телефон або пароль." };
     }
 
     // 3. ЖОРСТКЕ РОЗДІЛЕННЯ: Перевіряємо, чи збігається роль користувача з формою, через яку він входить
@@ -63,7 +65,7 @@ export function AuthProvider({ children }) {
   };
 
   // 4. ЛОГІКА РЕЄСТРАЦІЇ (Імітація INSERT INTO users ...)
-  const register = (name, email, password) => {
+  const register = (name, email, password, phoneNumber = "") => {
     // Перевірка на унікальність email (як UNIQUE у SQL)
     const emailExists = usersDB.some((u) => u.email === email);
     if (emailExists) {
@@ -75,7 +77,7 @@ export function AuthProvider({ children }) {
       id: Date.now(), // Імітація AUTO_INCREMENT
       name: name,
       email: email,
-      phone_number: "", // Дефолтне пусте значення
+      phone_number: phoneNumber || "",
       password_hash: password, // Імітуємо збереження хешу
       role: "user",
       created_at: new Date().toISOString(), // Імітація CURRENT_TIMESTAMP
@@ -127,8 +129,31 @@ export function AuthProvider({ children }) {
     return false;
   };
 
+  // 6. ОНОВЛЕННЯ ПАРОЛЯ
+  const updatePassword = (oldPassword, newPassword) => {
+    if (!user) {
+      return { success: false, message: "Користувач не авторизований." };
+    }
+    const foundUser = usersDB.find((u) => u.id === user.id);
+    if (!foundUser) {
+      return { success: false, message: "Користувача не знайдено." };
+    }
+    if (foundUser.password_hash !== oldPassword) {
+      return { success: false, message: "Невірний старий пароль." };
+    }
+
+    setUsersDB((prevDB) =>
+      prevDB.map((u) =>
+        u.id === user.id ? { ...u, password_hash: newPassword } : u,
+      ),
+    );
+    return { success: true };
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, updateUser }}>
+    <AuthContext.Provider
+      value={{ user, login, register, logout, updateUser, updatePassword }}
+    >
       {children}
     </AuthContext.Provider>
   );

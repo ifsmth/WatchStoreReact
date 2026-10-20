@@ -1,140 +1,308 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import {
+  User,
+  Mail,
+  Phone,
+  Edit3,
+  KeyRound,
+  LogOut,
+  Clock,
+  Package,
+  ShoppingBag,
+  Sparkles,
+  ChevronRight,
+  Eye,
+} from "lucide-react";
 import { useAuth } from "../contexts/AuthContext.jsx";
-import { useOrders } from "../contexts/OrdersContext.jsx"; // Додаємо контекст замовлень
-import PageHeading from "../components/ui/PageHeading.jsx";
-import AppButton from "../components/ui/AppButton.jsx";
+import { useOrders } from "../contexts/OrdersContext.jsx";
 
 export default function AccountPage() {
   const { user, logout } = useAuth();
-  const { orders } = useOrders(); // Отримуємо всі замовлення
+  const { orders } = useOrders();
+  const navigate = useNavigate();
 
-  // Фільтруємо замовлення: шукаємо ті, де ім'я або пошта збігається з поточним юзером
-  // (В реальному проєкті тут би порівнювався user.id)
-  const myOrders = orders.filter(
+  if (!user) {
+    return null;
+  }
+
+  // Filter orders related to this user
+  const myOrders = (orders || []).filter(
     (order) =>
       order.customer?.email === user.email ||
       order.customer?.name === user.name,
   );
 
+  const getInitials = (name = "") => {
+    const parts = name.trim().split(" ");
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase() || "CC";
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
+
   return (
-    <section
-      aria-labelledby="account-title"
-      style={{ maxWidth: "800px", margin: "0 auto", padding: "2rem 0" }}
+    <div
+      className="chrono-container"
+      style={{ paddingTop: "2rem", paddingBottom: "4rem" }}
     >
-      <PageHeading title="Особистий кабінет" />
+      {/* Breadcrumbs */}
+      <div className="chrono-breadcrumbs" style={{ marginBottom: "1.5rem" }}>
+        <Link to="/" className="chrono-breadcrumb-link">
+          Головна
+        </Link>
+        <ChevronRight size={14} color="#f59e0b" />
+        <span style={{ fontWeight: 700, color: "var(--chrono-emerald-950)" }}>
+          Особистий кабінет
+        </span>
+      </div>
 
-      {/* Блок з особистими даними */}
-      <div className="order-form-container" style={{ marginBottom: "2rem" }}>
-        <h2 style={{ fontSize: "1.5rem", marginBottom: "1.5rem" }}>
-          Вітаємо, {user.name}!
-        </h2>
+      {/* 1. Account Welcome Hero Banner */}
+      <section className="chrono-account-banner" aria-label="Профіль клієнта">
+        <div className="chrono-account-banner-inner">
+          <div className="chrono-user-header">
+            <div className="chrono-avatar-ring">{getInitials(user.name)}</div>
+            <div>
+              <span className="chrono-user-badge">
+                <Sparkles size={12} /> ChronoClassic Club
+              </span>
+              <h1 className="chrono-user-greeting">Вітаємо, {user.name}!</h1>
+              <p
+                style={{
+                  color: "rgba(209, 250, 229, 0.7)",
+                  margin: 0,
+                  fontSize: "0.875rem",
+                  fontWeight: 300,
+                }}
+              >
+                Особистий кабінет клієнта та історія покупок
+              </p>
+            </div>
+          </div>
 
-        <dl className="details-list" style={{ marginBottom: "2rem" }}>
-          <dt>Ім'я</dt>
-          <dd>{user.name}</dd>
-          <dt>Пошта</dt>
-          <dd>{user.email}</dd>
-          <dt>Телефон</dt>
-          <dd>{user.phone || "Не вказано"}</dd>
-        </dl>
+          <div className="chrono-account-actions-top">
+            <Link
+              to="/account/edit"
+              className="chrono-btn-secondary"
+              style={{ padding: "0.75rem 1.25rem", fontSize: "0.75rem" }}
+            >
+              <Edit3 size={15} /> Редагувати дані
+            </Link>
+            <Link
+              to="/account/edit/password"
+              className="chrono-btn-secondary"
+              style={{ padding: "0.75rem 1.25rem", fontSize: "0.75rem" }}
+            >
+              <KeyRound size={15} /> Змінити пароль
+            </Link>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="chrono-btn-danger-outline"
+              title="Вийти з акаунта"
+            >
+              <LogOut size={15} /> Вийти
+            </button>
+          </div>
+        </div>
+      </section>
 
-        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-          <Link to="/account/edit" className="app-button app-button-secondary">
-            Змінити дані
-          </Link>
+      {/* 2. Personal Information Card */}
+      <div className="chrono-account-card">
+        <div className="chrono-card-head">
+          <h2 className="chrono-card-head-title">
+            <User size={20} color="#f59e0b" /> Персональні дані
+          </h2>
           <Link
-            to="/account/edit/password"
-            className="app-button app-button-secondary"
-          >
-            Змінити пароль
-          </Link>
-
-          <AppButton
-            onClick={logout}
+            to="/account/edit"
             style={{
-              marginLeft: "auto",
-              color: "#d32f2f",
-              borderColor: "#ffcdd2",
-              backgroundColor: "#fff9f9",
+              fontSize: "0.75rem",
+              fontWeight: 700,
+              color: "var(--chrono-amber-600)",
+              textDecoration: "none",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.25rem",
             }}
           >
-            Вийти з акаунта
-          </AppButton>
+            Змінити
+          </Link>
+        </div>
+
+        <div className="chrono-user-details-grid">
+          <div className="chrono-user-detail-item">
+            <span className="chrono-detail-lbl">
+              <User size={13} color="#f59e0b" /> ПІБ / Ім'я
+            </span>
+            <span className="chrono-detail-val">{user.name}</span>
+          </div>
+
+          <div className="chrono-user-detail-item">
+            <span className="chrono-detail-lbl">
+              <Mail size={13} color="#f59e0b" /> Електронна пошта
+            </span>
+            <span className="chrono-detail-val">{user.email}</span>
+          </div>
+
+          <div className="chrono-user-detail-item">
+            <span className="chrono-detail-lbl">
+              <Phone size={13} color="#f59e0b" /> Номер телефону
+            </span>
+            <span className="chrono-detail-val">
+              {user.phone_number || user.phone || "Не вказано"}
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* НОВИЙ БЛОК: Історія замовлень */}
-      <div className="order-form-container">
-        <h3
-          style={{
-            fontSize: "1.3rem",
-            marginBottom: "1.5rem",
-            borderBottom: "1px solid #dedbd3",
-            paddingBottom: "1rem",
-          }}
-        >
-          Історія замовлень
-        </h3>
+      {/* 3. Order History Card */}
+      <div className="chrono-account-card">
+        <div className="chrono-card-head">
+          <h2 className="chrono-card-head-title">
+            <Clock size={20} color="#f59e0b" /> Історія замовлень
+          </h2>
+          <span
+            style={{
+              fontSize: "0.75rem",
+              fontWeight: 600,
+              color: "rgba(6, 78, 59, 0.6)",
+            }}
+          >
+            Всього: {myOrders.length}
+          </span>
+        </div>
 
         {myOrders.length > 0 ? (
-          <div className="table-scroll">
-            <table className="requests-table">
+          <div className="chrono-table-container">
+            <table className="chrono-orders-table">
               <thead>
                 <tr>
                   <th>№ Замовлення</th>
                   <th>Статус</th>
                   <th>Сума</th>
+                  <th>Товари</th>
                   <th>Дії</th>
                 </tr>
               </thead>
               <tbody>
-                {myOrders.map((order) => (
-                  <tr key={order.id}>
-                    <td style={{ fontWeight: "bold" }}>
-                      #{order.id.toString().slice(-4)}
-                    </td>
-                    <td>
-                      <span
+                {myOrders.map((order) => {
+                  const isNew =
+                    order.status === "Нове" || order.status === "new";
+                  const orderItemsCount =
+                    order.items?.length || (order.productId ? 1 : 1);
+
+                  return (
+                    <tr key={order.id}>
+                      <td
                         style={{
-                          padding: "0.3rem 0.6rem",
-                          borderRadius: "4px",
-                          fontSize: "0.75rem",
-                          fontWeight: "bold",
-                          backgroundColor:
-                            order.status === "Нове" || order.status === "new"
-                              ? "#e7e8e0"
-                              : "#f1f8f4",
-                          color:
-                            order.status === "Нове" || order.status === "new"
-                              ? "#4a504a"
-                              : "#27704a",
+                          fontWeight: 800,
+                          color: "var(--chrono-emerald-950)",
                         }}
                       >
-                        {order.status || "В обробці"}
-                      </span>
-                    </td>
-                    <td style={{ fontWeight: "bold", color: "#a74f30" }}>
-                      {(order.totalPrice || 0).toLocaleString("uk-UA")} ₴
-                    </td>
-                    <td>
-                      {/* Оскільки детальна сторінка тепер в адмінці, клієнту можна просто вивести текст або зробити окрему сторінку деталей для клієнта. Поки залишимо текст. */}
-                      <span style={{ fontSize: "0.85rem", color: "#686861" }}>
-                        Перегляд недоступний
-                      </span>
-                    </td>
-                  </tr>
-                ))}
+                        #{order.id.toString().slice(-6)}
+                      </td>
+                      <td>
+                        <span
+                          className={`chrono-order-pill ${
+                            isNew ? "new" : "completed"
+                          }`}
+                        >
+                          {order.status || "В обробці"}
+                        </span>
+                      </td>
+                      <td
+                        style={{
+                          fontWeight: 800,
+                          color: "var(--chrono-amber-600)",
+                          fontSize: "1rem",
+                        }}
+                      >
+                        {(order.totalPrice || 0).toLocaleString("uk-UA")} ₴
+                      </td>
+                      <td
+                        style={{
+                          color: "rgba(6, 78, 59, 0.8)",
+                          fontSize: "0.8125rem",
+                        }}
+                      >
+                        <span
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "0.35rem",
+                          }}
+                        >
+                          <Package size={14} color="#f59e0b" />{" "}
+                          {orderItemsCount} шт.
+                        </span>
+                      </td>
+                      <td>
+                        <Link
+                          to={`/orders/${order.id}`}
+                          className="chrono-btn-details"
+                          style={{
+                            width: "auto",
+                            display: "inline-flex",
+                            padding: "0.4rem 0.8rem",
+                            fontSize: "0.7rem",
+                          }}
+                        >
+                          <Eye size={13} color="#d97706" /> Деталі
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
         ) : (
-          <p
-            style={{ color: "#686861", textAlign: "center", padding: "2rem 0" }}
+          <div
+            style={{
+              padding: "3rem 1.5rem",
+              textAlign: "center",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
-            Ви ще не зробили жодного замовлення.
-          </p>
+            <ShoppingBag
+              size={56}
+              color="rgba(6, 78, 59, 0.2)"
+              style={{ marginBottom: "1rem" }}
+            />
+            <h3
+              style={{
+                fontSize: "1.125rem",
+                fontWeight: 700,
+                color: "var(--chrono-emerald-950)",
+                marginBottom: "0.5rem",
+              }}
+            >
+              У вас поки немає замовлень
+            </h3>
+            <p
+              style={{
+                fontSize: "0.875rem",
+                color: "rgba(6, 78, 59, 0.6)",
+                marginBottom: "1.5rem",
+                maxWidth: "24rem",
+              }}
+            >
+              Оберіть класичний наручний годинник у нашому каталозі та зробіть
+              своє перше замовлення!
+            </p>
+            <Link to="/products" className="chrono-btn-primary">
+              Перейти до каталогу
+            </Link>
+          </div>
         )}
       </div>
-    </section>
+    </div>
   );
 }

@@ -1,133 +1,217 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
+import { LogIn, UserPlus, CheckCircle2 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext.jsx";
-import PageHeading from "../components/ui/PageHeading.jsx";
-import AppButton from "../components/ui/AppButton.jsx";
 
 export default function RegisterPage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone_number: "",
+    password: "",
+    confirmPassword: "",
+  });
   const [error, setError] = useState("");
+  const [notification, setNotification] = useState(null);
 
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const showNotification = (msg) => {
+    setNotification(msg);
+    setTimeout(() => setNotification(null), 3000);
+  };
+
+  const handleRegister = (e) => {
     e.preventDefault();
     setError("");
 
-    // Валідація
-    if (!name.trim()) {
-      setError("Введіть ваше ім'я.");
+    if (!formData.name.trim()) {
+      setError("Введіть ваше ім'я або ПІБ.");
       return;
     }
-    if (!email.includes("@")) {
+    if (!formData.email.includes("@")) {
       setError("Введіть коректну електронну пошту.");
       return;
     }
-    if (password.length < 6) {
+    if (!formData.phone_number.trim()) {
+      setError("Введіть номер телефону.");
+      return;
+    }
+    if (formData.password.length < 6) {
       setError("Пароль має містити мінімум 6 символів.");
       return;
     }
-    if (password !== confirmPassword) {
-      setError("Паролі не збігаються.");
+    if (formData.password !== formData.confirmPassword) {
+      setError("Паролі не збігаються!");
       return;
     }
 
-    // Спроба реєстрації
-    const success = register(name, email, password);
-    if (success) {
-      navigate("/"); // Після успішної реєстрації перекидаємо на головну (або можна на /account)
+    const result = register(
+      formData.name.trim(),
+      formData.email.trim(),
+      formData.password,
+      formData.phone_number.trim(),
+    );
+
+    if (result.success) {
+      showNotification(
+        `Вітаємо, ${formData.name}! Реєстрацію успішно завершено.`,
+      );
+      setTimeout(() => navigate("/"), 1200);
     } else {
-      setError("Сталася помилка під час реєстрації. Спробуйте ще раз.");
+      setError(result.message || "Помилка під час реєстрації.");
     }
   };
 
   return (
-    <section
-      aria-labelledby="register-title"
-      style={{ maxWidth: "450px", margin: "0 auto", padding: "2rem 0" }}
-    >
-      <PageHeading title="Створення акаунта" />
+    <div className="chrono-container chrono-auth-page">
+      {/* Toast Notification */}
+      {notification && (
+        <div className="chrono-toast">
+          <CheckCircle2 size={16} />
+          <span>{notification}</span>
+        </div>
+      )}
 
-      <div className="order-form-container">
-        <form onSubmit={handleSubmit} noValidate>
-          {error && (
-            <p role="alert" className="field-error">
-              {error}
-            </p>
-          )}
+      <div className="chrono-auth-card wide">
+        {/* Form Switcher Tabs */}
+        <div className="chrono-auth-tabs">
+          <Link to="/login" className="chrono-auth-tab">
+            <LogIn size={16} /> Вхід
+          </Link>
+          <button type="button" className="chrono-auth-tab active">
+            <UserPlus size={16} /> Реєстрація
+          </button>
+        </div>
 
-          <div className="form-field">
-            <label htmlFor="name">Ваше ім'я</label>
+        <h1 className="chrono-auth-title">Створити акаунт</h1>
+        <p className="chrono-auth-subtitle">
+          Заповніть дані для реєстрації нового покупця та отримайте доступ до
+          спеціальних пропозицій
+        </p>
+
+        {error && <div className="chrono-auth-error">{error}</div>}
+
+        <form onSubmit={handleRegister} noValidate>
+          {/* Name field */}
+          <div className="chrono-form-group">
+            <label className="chrono-label">ПІБ / Ім'я *</label>
             <input
-              id="name"
               type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Іван Франко"
+              required
+              placeholder="Олександр Ковальчук"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+              className="chrono-input-light"
             />
           </div>
 
-          <div className="form-field">
-            <label htmlFor="email">Електронна пошта</label>
+          {/* Email field */}
+          <div className="chrono-form-group">
+            <label className="chrono-label">Email адреса *</label>
             <input
-              id="email"
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="name@example.com"
+              required
+              placeholder="kovalchuk@gmail.com"
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              className="chrono-input-light"
             />
           </div>
 
-          <div className="form-field">
-            <label htmlFor="password">Пароль</label>
+          {/* Phone field */}
+          <div className="chrono-form-group">
+            <label className="chrono-label">Номер телефону *</label>
             <input
-              id="password"
+              type="tel"
+              required
+              placeholder="+380 99 123 45 67"
+              value={formData.phone_number}
+              onChange={(e) =>
+                setFormData({ ...formData, phone_number: e.target.value })
+              }
+              className="chrono-input-light"
+            />
+          </div>
+
+          {/* Password field */}
+          <div className="chrono-form-group">
+            <label className="chrono-label">Пароль *</label>
+            <input
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              required
               placeholder="Мінімум 6 символів"
+              value={formData.password}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              className="chrono-input-light"
             />
           </div>
 
-          <div className="form-field">
-            <label htmlFor="confirmPassword">Підтвердження пароля</label>
+          {/* Confirm Password field */}
+          <div className="chrono-form-group">
+            <label className="chrono-label">Підтвердження пароля *</label>
             <input
-              id="confirmPassword"
               type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
               placeholder="Повторіть пароль"
+              value={formData.confirmPassword}
+              onChange={(e) =>
+                setFormData({ ...formData, confirmPassword: e.target.value })
+              }
+              className="chrono-input-light"
             />
           </div>
 
-          <div className="form-actions" style={{ marginTop: "2.5rem" }}>
-            <AppButton
-              type="submit"
-              className="app-button app-button-primary"
-              style={{ width: "100%" }}
-            >
-              Зареєструватися
-            </AppButton>
-          </div>
+          <button
+            type="submit"
+            className="chrono-btn-auth-amber"
+            style={{ marginTop: "1rem" }}
+          >
+            Зареєструватися
+          </button>
         </form>
 
         <p
           style={{
+            fontSize: "0.6875rem",
             textAlign: "center",
+            color: "rgba(6, 78, 59, 0.5)",
             marginTop: "1.5rem",
-            fontSize: "0.9rem",
+            lineHeight: 1.5,
+          }}
+        >
+          Натискаючи кнопку, ви погоджуєтеся з обробкою персональних даних
+          відповідно до законодавства України.
+        </p>
+
+        <p
+          style={{
+            textAlign: "center",
+            marginTop: "1rem",
+            fontSize: "0.75rem",
+            color: "rgba(6, 78, 59, 0.6)",
           }}
         >
           Вже маєте акаунт?{" "}
-          <Link to="/login" style={{ color: "#bd5c38", fontWeight: "bold" }}>
+          <Link
+            to="/login"
+            style={{
+              color: "var(--chrono-amber-600)",
+              fontWeight: 700,
+              textDecoration: "none",
+            }}
+          >
             Увійти
           </Link>
         </p>
       </div>
-    </section>
+    </div>
   );
 }

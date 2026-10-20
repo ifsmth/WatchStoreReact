@@ -1,0 +1,2198 @@
+/* ==========================================================================
+   ChronoClassic Theme - Luxury Wristwatch Store Styles
+   ========================================================================== */
+
+:root {
+  --chrono-emerald-950: #022c22;
+  --chrono-emerald-900: #064e3b;
+  --chrono-emerald-800: #065f46;
+  --chrono-emerald-700: #047857;
+  --chrono-emerald-600: #059669;
+  --chrono-emerald-500: #10b981;
+  --chrono-emerald-200: #a7f3d0;
+  --chrono-emerald-100: #d1fae5;
+  --chrono-emerald-50: #ecfdf5;
+
+  --chrono-amber-600: #d97706;
+  --chrono-amber-500: #f59e0b;
+  --chrono-amber-400: #fbbf24;
+  --chrono-amber-200: #fde68a;
+  --chrono-amber-100: #fef3c7;
+  --chrono-amber-50: #fffbeb;
+
+  --chrono-bg-page: #f9f8f6;
+  --chrono-bg-card: #ffffff;
+  --chrono-bg-photo: #f2f1ec;
+  --chrono-text-dark: #022c22;
+  --chrono-text-subtle: rgba(6, 78, 59, 0.7);
+
+  --chrono-font-serif: "Playfair Display", Georgia, serif;
+  --chrono-font-sans:
+    "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --chrono-radius-sm: 8px;
+  --chrono-radius-md: 12px;
+  --chrono-radius-lg: 16px;
+  --chrono-radius-xl: 24px;
+  --chrono-radius-2xl: 32px;
+  --chrono-radius-3xl: 40px;
+
+  --chrono-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --chrono-shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --chrono-shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --chrono-shadow-xl:
+    0 20px 25px -5px rgba(2, 44, 34, 0.1),
+    0 10px 10px -5px rgba(2, 44, 34, 0.04);
+  --chrono-shadow-2xl: 0 25px 50px -12px rgba(2, 44, 34, 0.25);
+}
+
+/* Base Body and Layout Overrides for Customer Facing Store */
+body {
+  background-color: var(--chrono-bg-page);
+  color: var(--chrono-text-dark);
+  font-family: var(--chrono-font-sans);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background-color: rgba(245, 158, 11, 0.3);
+  color: var(--chrono-emerald-950);
+}
+
+.chrono-app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--chrono-bg-page);
+  color: var(--chrono-text-dark);
+}
+
+.chrono-main {
+  flex: 1 1 auto;
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: calc(100vh - 12rem);
+}
+
+.chrono-container {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .chrono-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .chrono-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* ==========================================================================
+   Toast Notification
+   ========================================================================== */
+.chrono-toast {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 100;
+  background-color: var(--chrono-emerald-950);
+  color: var(--chrono-amber-400);
+  padding: 0.875rem 1.5rem;
+  border-radius: var(--chrono-radius-lg);
+  box-shadow: var(--chrono-shadow-2xl);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: chronoBounce 1s infinite alternate;
+}
+
+@keyframes chronoBounce {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-6px);
+  }
+}
+
+/* ==========================================================================
+   Site Header
+   ========================================================================== */
+.chrono-header {
+  background-color: var(--chrono-emerald-950);
+  border-bottom: 1px solid var(--chrono-emerald-900);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: var(--chrono-shadow-md);
+  max-width: 100% !important;
+  width: 100% !important;
+  padding: 0 !important;
+}
+
+.chrono-header-inner {
+  height: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chrono-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+}
+
+.chrono-logo-icon {
+  background-color: rgba(6, 78, 59, 0.5);
+  padding: 0.625rem;
+  border-radius: var(--chrono-radius-md);
+  color: var(--chrono-amber-500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.chrono-logo:hover .chrono-logo-icon {
+  background-color: var(--chrono-amber-500);
+  color: var(--chrono-emerald-950);
+}
+
+.chrono-logo-title {
+  font-family: var(--chrono-font-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #f9f8f6;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  display: block;
+  line-height: 1;
+}
+
+.chrono-logo-subtitle {
+  font-size: 10px;
+  color: var(--chrono-amber-500);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  display: block;
+  margin-top: 0.25rem;
+}
+
+.chrono-nav {
+  display: none;
+  align-items: center;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .chrono-nav {
+    display: flex;
+  }
+}
+
+.chrono-nav-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #f9f8f6;
+  padding: 0.5rem 0;
+  text-decoration: none;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.chrono-nav-btn:hover {
+  color: var(--chrono-amber-400);
+}
+
+.chrono-nav-btn.active {
+  color: var(--chrono-amber-500);
+  border-bottom: 2px solid var(--chrono-amber-500);
+}
+
+.chrono-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.chrono-icon-btn {
+  padding: 0.625rem;
+  border-radius: 9999px;
+  color: #f9f8f6;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.chrono-icon-btn:hover {
+  background-color: var(--chrono-emerald-900);
+  color: var(--chrono-amber-400);
+}
+
+.chrono-icon-btn.active {
+  background-color: var(--chrono-amber-500);
+  color: var(--chrono-emerald-950);
+}
+
+.chrono-cart-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: var(--chrono-amber-500);
+  color: var(--chrono-emerald-950);
+  font-weight: 800;
+  font-size: 10px;
+  width: 1.25rem;
+  height: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  box-shadow: var(--chrono-shadow-sm);
+  animation: chronoPulse 2s infinite;
+}
+
+@keyframes chronoPulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.1);
+  }
+}
+
+.chrono-menu-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem;
+  border-radius: var(--chrono-radius-md);
+  background-color: var(--chrono-emerald-900);
+  color: #f9f8f6;
+  border: none;
+  cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  .chrono-menu-toggle {
+    display: none;
+  }
+}
+
+.chrono-mobile-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: var(--chrono-emerald-950);
+  border-top: 1px solid var(--chrono-emerald-900);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-shadow: var(--chrono-shadow-2xl);
+  border-bottom-left-radius: var(--chrono-radius-xl);
+  border-bottom-right-radius: var(--chrono-radius-xl);
+  z-index: 50;
+}
+
+.chrono-mobile-link {
+  text-align: left;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  border-radius: var(--chrono-radius-md);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: transparent;
+  border: none;
+  color: #f9f8f6;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 0.875rem;
+  display: block;
+}
+
+.chrono-mobile-link.active {
+  background-color: var(--chrono-emerald-900);
+  color: var(--chrono-amber-400);
+}
+
+/* ==========================================================================
+   Site Footer
+   ========================================================================== */
+.chrono-footer {
+  background-color: var(--chrono-emerald-950);
+  color: var(--chrono-emerald-50);
+  padding-top: 4rem;
+  padding-bottom: 2rem;
+  border-top: 4px solid var(--chrono-amber-600);
+  border-top-left-radius: var(--chrono-radius-2xl);
+  border-top-right-radius: var(--chrono-radius-2xl);
+  margin-top: 4rem;
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+.chrono-footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+@media (min-width: 768px) {
+  .chrono-footer-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.chrono-footer-brand-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-family: var(--chrono-font-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.chrono-footer-desc {
+  color: rgba(209, 250, 229, 0.7);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.chrono-socials {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.chrono-social-btn {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background-color: var(--chrono-emerald-900);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--chrono-amber-400);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.chrono-social-btn:hover {
+  background-color: var(--chrono-amber-500);
+  color: var(--chrono-emerald-950);
+}
+
+.chrono-footer-heading {
+  font-weight: 700;
+  color: var(--chrono-amber-500);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.875rem;
+}
+
+.chrono-footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.chrono-footer-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: rgba(209, 250, 229, 0.8);
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-align: left;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.chrono-footer-link:hover {
+  color: var(--chrono-amber-400);
+}
+
+.chrono-footer-contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  color: rgba(209, 250, 229, 0.8);
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
+}
+
+.chrono-footer-bottom {
+  border-top: 1px solid rgba(6, 78, 59, 0.5);
+  padding-top: 2rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: rgba(209, 250, 229, 0.4);
+}
+
+/* ==========================================================================
+   Hero Section (HomePage & AboutPage)
+   ========================================================================== */
+.chrono-hero {
+  position: relative;
+  background-color: var(--chrono-emerald-950);
+  padding: 6rem 1.5rem;
+  overflow: hidden;
+  margin-bottom: 4rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  margin-top: 1rem;
+  border-radius: var(--chrono-radius-2xl);
+  box-shadow: var(--chrono-shadow-2xl);
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .chrono-hero {
+    padding: 8rem 2rem;
+  }
+}
+
+.chrono-hero-bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.35;
+  background-size: cover;
+  background-position: center;
+  mix-blend-mode: overlay;
+}
+
+.chrono-hero-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    var(--chrono-emerald-950),
+    rgba(2, 44, 34, 0.5),
+    transparent
+  );
+}
+
+.chrono-hero-content {
+  position: relative;
+  z-index: 10;
+  max-width: 52rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.chrono-pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 1rem;
+  border-radius: 9999px;
+  background-color: rgba(245, 158, 11, 0.15);
+  color: var(--chrono-amber-400);
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.chrono-hero-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #f9f8f6;
+  margin-bottom: 1.5rem;
+  line-height: 1.15;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: var(--chrono-font-serif);
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+@media (min-width: 768px) {
+  .chrono-hero-title {
+    font-size: 3.75rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .chrono-hero-title {
+    font-size: 4.5rem;
+  }
+}
+
+.chrono-text-gold {
+  color: var(--chrono-amber-500);
+}
+
+.chrono-hero-text {
+  color: var(--chrono-emerald-50);
+  max-width: 42rem;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 2.5rem;
+  font-size: 1.125rem;
+  font-weight: 300;
+  line-height: 1.7;
+}
+
+@media (min-width: 768px) {
+  .chrono-hero-text {
+    font-size: 1.25rem;
+  }
+}
+
+.chrono-hero-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: center;
+}
+
+@media (min-width: 640px) {
+  .chrono-hero-actions {
+    flex-direction: row;
+  }
+}
+
+/* Buttons */
+.chrono-btn-primary {
+  background-color: var(--chrono-amber-500);
+  color: var(--chrono-emerald-950);
+  padding: 1rem 2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: var(--chrono-radius-lg);
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  text-decoration: none;
+  box-shadow: var(--chrono-shadow-lg);
+  transition: all 0.25s ease;
+}
+
+.chrono-btn-primary:hover {
+  background-color: var(--chrono-amber-400);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(245, 158, 11, 0.25);
+}
+
+.chrono-btn-secondary {
+  background-color: rgba(6, 78, 59, 0.8);
+  color: #f9f8f6;
+  border: 1px solid rgba(4, 120, 87, 0.5);
+  padding: 1rem 2rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: var(--chrono-radius-lg);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.chrono-btn-secondary:hover {
+  background-color: var(--chrono-emerald-900);
+  color: var(--chrono-amber-400);
+}
+
+/* ==========================================================================
+   Brands Section
+   ========================================================================== */
+.chrono-brands-section {
+  margin-bottom: 5rem;
+}
+
+.chrono-brands-eyebrow {
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: rgba(6, 78, 59, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  margin-bottom: 2rem;
+}
+
+.chrono-brands-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem 3rem;
+  opacity: 0.85;
+}
+
+.chrono-brand-link {
+  background: none;
+  border: none;
+  font-family: var(--chrono-font-serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--chrono-emerald-950);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+@media (min-width: 768px) {
+  .chrono-brand-link {
+    font-size: 1.65rem;
+  }
+}
+
+.chrono-brand-link:hover {
+  color: var(--chrono-amber-600);
+  transform: scale(1.05);
+}
+
+/* ==========================================================================
+   Section Headers
+   ========================================================================== */
+.chrono-section-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.chrono-section-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--chrono-emerald-950);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: var(--chrono-font-serif);
+  margin-bottom: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .chrono-section-title {
+    font-size: 2.25rem;
+  }
+}
+
+.chrono-section-subtitle {
+  color: rgba(6, 78, 59, 0.65);
+  font-size: 0.875rem;
+}
+
+.chrono-divider {
+  width: 5rem;
+  height: 4px;
+  background-color: var(--chrono-amber-500);
+  border-radius: 9999px;
+  margin-top: 1rem;
+}
+
+/* ==========================================================================
+   Product Cards & Grid
+   ========================================================================== */
+.chrono-products-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .chrono-products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .chrono-products-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .chrono-products-grid.home-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.chrono-product-card {
+  background-color: #ffffff;
+  border: 1px solid var(--chrono-emerald-100);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: var(--chrono-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--chrono-shadow-sm);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chrono-product-card:hover {
+  box-shadow: var(--chrono-shadow-xl);
+  transform: translateY(-4px);
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.chrono-product-photo-box {
+  height: 16rem;
+  background-color: var(--chrono-bg-photo);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.chrono-product-rating {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--chrono-amber-600);
+  border: 1px solid var(--chrono-amber-200);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  z-index: 10;
+  box-shadow: var(--chrono-shadow-sm);
+}
+
+.chrono-product-img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  filter: drop-shadow(0 15px 15px rgba(0, 0, 0, 0.15));
+  transition: transform 0.5s ease;
+}
+
+.chrono-product-card:hover .chrono-product-img {
+  transform: scale(1.06);
+}
+
+.chrono-product-info {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.chrono-product-brand {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--chrono-amber-600);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.25rem;
+}
+
+.chrono-product-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--chrono-emerald-950);
+  margin-bottom: 0.5rem;
+  line-height: 1.35;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.chrono-product-title:hover {
+  color: var(--chrono-amber-600);
+}
+
+.chrono-product-desc {
+  font-size: 0.75rem;
+  color: rgba(6, 78, 59, 0.65);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.chrono-product-price {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--chrono-amber-600);
+  margin-bottom: 1rem;
+}
+
+.chrono-product-specs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.75rem;
+  color: rgba(6, 78, 59, 0.8);
+  background-color: rgba(236, 253, 245, 0.6);
+  padding: 0.875rem;
+  border-radius: var(--chrono-radius-md);
+  border: 1px solid rgba(209, 250, 229, 0.8);
+}
+
+.chrono-spec-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.chrono-spec-label {
+  font-weight: 600;
+  color: var(--chrono-emerald-950);
+}
+
+.chrono-stock-status {
+  color: var(--chrono-emerald-800);
+  font-weight: 600;
+  font-size: 0.75rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chrono-stock-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background-color: var(--chrono-emerald-500);
+  display: inline-block;
+}
+
+.chrono-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.chrono-btn-add-cart {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: var(--chrono-emerald-950);
+  color: #ffffff;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: var(--chrono-radius-md);
+  box-shadow: var(--chrono-shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.chrono-btn-add-cart:hover {
+  background-color: var(--chrono-emerald-800);
+  box-shadow: var(--chrono-shadow-md);
+}
+
+.chrono-btn-details {
+  width: 100%;
+  padding: 0.625rem 1rem;
+  background-color: var(--chrono-emerald-50);
+  color: var(--chrono-emerald-950);
+  font-weight: 700;
+  border: 1px solid var(--chrono-emerald-200);
+  cursor: pointer;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: var(--chrono-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.chrono-btn-details:hover {
+  background-color: var(--chrono-emerald-100);
+}
+
+/* ==========================================================================
+   Philosophy Banner (Home Page)
+   ========================================================================== */
+.chrono-philosophy-banner {
+  background-color: var(--chrono-emerald-900);
+  color: #f9f8f6;
+  padding: 5rem 1.5rem;
+  margin-bottom: 6rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  border-radius: var(--chrono-radius-2xl);
+  box-shadow: var(--chrono-shadow-xl);
+  position: relative;
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .chrono-philosophy-banner {
+    padding: 5rem 3rem;
+  }
+}
+
+.chrono-philosophy-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .chrono-philosophy-grid {
+    flex-direction: row;
+  }
+}
+
+.chrono-philosophy-col {
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .chrono-philosophy-col {
+    width: 50%;
+  }
+}
+
+.chrono-philosophy-features {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+@media (min-width: 640px) {
+  .chrono-philosophy-features {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.chrono-feature-box {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: rgba(2, 44, 34, 0.4);
+  padding: 0.875rem;
+  border-radius: var(--chrono-radius-lg);
+  border: 1px solid rgba(6, 78, 59, 0.5);
+}
+
+.chrono-feature-icon-wrap {
+  background-color: rgba(245, 158, 11, 0.2);
+  padding: 0.5rem;
+  border-radius: var(--chrono-radius-md);
+  color: var(--chrono-amber-400);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chrono-feature-img-wrap {
+  position: relative;
+  border-radius: var(--chrono-radius-2xl);
+  overflow: hidden;
+  box-shadow: var(--chrono-shadow-2xl);
+  border: 4px solid rgba(6, 78, 59, 0.4);
+}
+
+.chrono-feature-img {
+  width: 100%;
+  height: 450px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.7s ease;
+}
+
+.chrono-feature-img-wrap:hover .chrono-feature-img {
+  transform: scale(1.05);
+}
+
+/* ==========================================================================
+   Catalog Page Layout & Filters
+   ========================================================================== */
+.chrono-catalog-page {
+  padding-top: 2rem;
+  padding-bottom: 4rem;
+}
+
+.chrono-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: rgba(6, 78, 59, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.75rem;
+}
+
+.chrono-breadcrumb-link {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  transition: color 0.2s ease;
+}
+
+.chrono-breadcrumb-link:hover {
+  color: var(--chrono-amber-600);
+}
+
+.chrono-catalog-top-bar {
+  background-color: #ffffff;
+  padding: 1rem;
+  border-radius: var(--chrono-radius-lg);
+  border: 1px solid var(--chrono-emerald-100);
+  box-shadow: var(--chrono-shadow-sm);
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (min-width: 768px) {
+  .chrono-catalog-top-bar {
+    flex-direction: row;
+  }
+}
+
+.chrono-search-box {
+  position: relative;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .chrono-search-box {
+    width: 24rem;
+  }
+}
+
+.chrono-search-icon {
+  position: absolute;
+  left: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(6, 78, 59, 0.4);
+  pointer-events: none;
+}
+
+.chrono-search-input {
+  width: 100%;
+  padding: 0.625rem 2.5rem 0.625rem 2.5rem;
+  border-radius: var(--chrono-radius-md);
+  border: 1px solid var(--chrono-emerald-200);
+  font-size: 0.875rem;
+  background-color: rgba(236, 253, 245, 0.3);
+  color: var(--chrono-emerald-950);
+  box-sizing: border-box;
+}
+
+.chrono-search-input:focus {
+  outline: none;
+  border-color: var(--chrono-amber-500);
+}
+
+.chrono-search-clear {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  font-size: 0.75rem;
+}
+
+.chrono-search-clear:hover {
+  color: var(--chrono-emerald-950);
+}
+
+.chrono-sort-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .chrono-sort-wrapper {
+    width: auto;
+  }
+}
+
+.chrono-select {
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--chrono-radius-md);
+  border: 1px solid var(--chrono-emerald-200);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--chrono-emerald-950);
+  background-color: #ffffff;
+  cursor: pointer;
+}
+
+.chrono-select:focus {
+  outline: none;
+  border-color: var(--chrono-amber-500);
+}
+
+.chrono-catalog-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 1024px) {
+  .chrono-catalog-layout {
+    grid-template-columns: 1fr 3fr;
+  }
+}
+
+.chrono-sidebar-card {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: var(--chrono-radius-xl);
+  border: 1px solid var(--chrono-emerald-100);
+  box-shadow: var(--chrono-shadow-sm);
+  position: sticky;
+  top: 6rem;
+}
+
+.chrono-sidebar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--chrono-emerald-100);
+}
+
+.chrono-sidebar-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  color: var(--chrono-emerald-950);
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+}
+
+.chrono-reset-btn {
+  background: none;
+  border: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--chrono-amber-600);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.chrono-reset-btn:hover {
+  color: #b45309;
+}
+
+.chrono-filter-group {
+  margin-bottom: 1.5rem;
+}
+
+.chrono-filter-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--chrono-emerald-950);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.chrono-brand-filter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  max-height: 12rem;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.chrono-filter-btn {
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--chrono-radius-md);
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgba(6, 78, 59, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+}
+
+.chrono-filter-btn:hover {
+  background-color: var(--chrono-emerald-50);
+  color: var(--chrono-emerald-950);
+}
+
+.chrono-filter-btn.active {
+  background-color: var(--chrono-emerald-950);
+  color: var(--chrono-amber-400);
+  font-weight: 700;
+}
+
+.chrono-gender-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.chrono-gender-btn {
+  padding: 0.5rem 0.75rem;
+  text-align: center;
+  border-radius: var(--chrono-radius-md);
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: rgba(236, 253, 245, 0.8);
+  color: rgba(6, 78, 59, 0.7);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chrono-gender-btn:hover {
+  background-color: var(--chrono-emerald-100);
+}
+
+.chrono-gender-btn.active {
+  background-color: var(--chrono-emerald-950);
+  color: var(--chrono-amber-400);
+  font-weight: 700;
+}
+
+.chrono-price-range {
+  width: 100%;
+  accent-color: var(--chrono-amber-500);
+  cursor: pointer;
+}
+
+.chrono-empty-box {
+  background-color: #ffffff;
+  border-radius: var(--chrono-radius-xl);
+  padding: 3rem 1.5rem;
+  border: 1px solid var(--chrono-emerald-100);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   About Us Page Styles
+   ========================================================================== */
+.chrono-about-page {
+  padding-bottom: 4rem;
+}
+
+.chrono-history-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  align-items: center;
+  margin-bottom: 6rem;
+}
+
+@media (min-width: 1024px) {
+  .chrono-history-grid {
+    flex-direction: row;
+  }
+}
+
+.chrono-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--chrono-emerald-100);
+  margin-top: 1.5rem;
+}
+
+.chrono-stat-val {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--chrono-amber-600);
+}
+
+@media (min-width: 768px) {
+  .chrono-stat-val {
+    font-size: 2rem;
+  }
+}
+
+.chrono-stat-lbl {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: rgba(6, 78, 59, 0.6);
+  text-transform: uppercase;
+}
+
+.chrono-history-photos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  width: 100%;
+}
+
+.chrono-history-photo {
+  border-radius: var(--chrono-radius-xl);
+  box-shadow: var(--chrono-shadow-lg);
+  height: 16rem;
+  width: 100%;
+  object-fit: cover;
+  border: 2px solid var(--chrono-emerald-100);
+}
+
+.chrono-values-section {
+  background-color: var(--chrono-emerald-950);
+  color: #ffffff;
+  padding: 5rem 1.5rem;
+  margin-bottom: 6rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  border-radius: var(--chrono-radius-2xl);
+  box-shadow: var(--chrono-shadow-xl);
+  position: relative;
+  overflow: hidden;
+}
+
+.chrono-values-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .chrono-values-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.chrono-value-card {
+  background-color: rgba(6, 78, 59, 0.4);
+  padding: 2rem;
+  border-radius: var(--chrono-radius-xl);
+  border: 1px solid rgba(4, 120, 87, 0.6);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+.chrono-value-card:hover {
+  border-color: rgba(245, 158, 11, 0.5);
+  transform: translateY(-4px);
+}
+
+.chrono-value-icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  background-color: rgba(245, 158, 11, 0.2);
+  color: var(--chrono-amber-400);
+  border-radius: var(--chrono-radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.chrono-why-us-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 6rem;
+}
+
+@media (min-width: 768px) {
+  .chrono-why-us-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .chrono-why-us-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.chrono-why-card {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: var(--chrono-radius-xl);
+  border: 1px solid var(--chrono-emerald-100);
+  box-shadow: var(--chrono-shadow-sm);
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  transition: all 0.3s ease;
+}
+
+.chrono-why-card:hover {
+  box-shadow: var(--chrono-shadow-xl);
+  transform: translateY(-4px);
+}
+
+.chrono-why-icon {
+  background-color: var(--chrono-emerald-50);
+  color: var(--chrono-amber-600);
+  padding: 0.875rem;
+  border-radius: var(--chrono-radius-lg);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* FAQ Accordion */
+.chrono-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 56rem;
+  margin: 0 auto 6rem auto;
+}
+
+.chrono-faq-item {
+  background-color: #ffffff;
+  border: 1px solid var(--chrono-emerald-100);
+  border-radius: var(--chrono-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--chrono-shadow-sm);
+}
+
+.chrono-faq-btn {
+  width: 100%;
+  text-align: left;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 700;
+  color: var(--chrono-emerald-950);
+  font-size: 0.875rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.chrono-faq-btn:hover {
+  color: var(--chrono-amber-600);
+}
+
+.chrono-faq-content {
+  padding: 0 1.25rem 1.25rem 1.25rem;
+  font-size: 0.75rem;
+  color: rgba(6, 78, 59, 0.8);
+  line-height: 1.6;
+  border-top: 1px solid var(--chrono-emerald-50);
+  background-color: rgba(236, 253, 245, 0.2);
+}
+
+/* Showroom & Contact */
+.chrono-contact-card {
+  background-color: var(--chrono-emerald-950);
+  color: #ffffff;
+  border-radius: var(--chrono-radius-2xl);
+  padding: 2rem;
+  box-shadow: var(--chrono-shadow-2xl);
+}
+
+@media (min-width: 768px) {
+  .chrono-contact-card {
+    padding: 3rem;
+  }
+}
+
+.chrono-contact-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+
+@media (min-width: 1024px) {
+  .chrono-contact-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.chrono-contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.chrono-contact-icon-box {
+  padding: 0.75rem;
+  background-color: rgba(6, 78, 59, 0.8);
+  border-radius: var(--chrono-radius-md);
+  color: var(--chrono-amber-400);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chrono-messenger-pills {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.chrono-messenger-btn {
+  padding: 0.5rem 1rem;
+  background-color: var(--chrono-emerald-900);
+  border-radius: var(--chrono-radius-md);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--chrono-amber-400);
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.chrono-messenger-btn:hover {
+  background-color: var(--chrono-amber-500);
+  color: var(--chrono-emerald-950);
+}
+
+.chrono-feedback-form-box {
+  background-color: rgba(6, 78, 59, 0.5);
+  padding: 1.5rem;
+  border-radius: var(--chrono-radius-xl);
+  border: 1px solid var(--chrono-emerald-800);
+}
+
+@media (min-width: 768px) {
+  .chrono-feedback-form-box {
+    padding: 2rem;
+  }
+}
+
+.chrono-form-group {
+  margin-bottom: 1rem;
+}
+
+.chrono-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: rgba(209, 250, 229, 0.8);
+  margin-bottom: 0.25rem;
+}
+
+.chrono-input-dark,
+.chrono-textarea-dark {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: var(--chrono-radius-md);
+  background-color: rgba(2, 44, 34, 0.8);
+  border: 1px solid var(--chrono-emerald-800);
+  font-size: 0.875rem;
+  color: #ffffff;
+  box-sizing: border-box;
+}
+
+.chrono-input-dark:focus,
+.chrono-textarea-dark:focus {
+  outline: none;
+  border-color: var(--chrono-amber-500);
+}
+
+/* ==========================================================================
+   Auth Pages (Login & Register)
+   ========================================================================== */
+.chrono-auth-page {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chrono-auth-card {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: var(--chrono-radius-xl);
+  border: 1px solid var(--chrono-emerald-100);
+  box-shadow: var(--chrono-shadow-xl);
+  width: 100%;
+  max-width: 28rem;
+  box-sizing: border-box;
+}
+
+.chrono-auth-card.wide {
+  max-width: 32rem;
+}
+
+.chrono-auth-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--chrono-emerald-100);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  gap: 1rem;
+}
+
+.chrono-auth-tab {
+  flex: 1;
+  padding-bottom: 0.5rem;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  color: rgba(6, 78, 59, 0.4);
+  transition: all 0.2s ease;
+}
+
+.chrono-auth-tab:hover {
+  color: var(--chrono-emerald-950);
+}
+
+.chrono-auth-tab.active {
+  color: var(--chrono-amber-600);
+  border-bottom: 2px solid var(--chrono-amber-500);
+}
+
+.chrono-auth-icon-circle {
+  width: 3rem;
+  height: 3rem;
+  color: var(--chrono-emerald-900);
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 0.75rem;
+  background-color: var(--chrono-emerald-50);
+  padding: 0.625rem;
+  border-radius: var(--chrono-radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chrono-auth-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--chrono-emerald-950);
+  font-family: var(--chrono-font-serif);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.chrono-auth-subtitle {
+  font-size: 0.75rem;
+  color: rgba(6, 78, 59, 0.6);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.chrono-input-light {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: var(--chrono-radius-md);
+  border: 1px solid var(--chrono-emerald-200);
+  font-size: 0.75rem;
+  background-color: rgba(236, 253, 245, 0.2);
+  color: var(--chrono-emerald-950);
+  box-sizing: border-box;
+}
+
+.chrono-input-light:focus {
+  outline: none;
+  border-color: var(--chrono-amber-500);
+}
+
+.chrono-auth-error {
+  background-color: #fee2e2;
+  border: 1px solid #f87171;
+  color: #991b1b;
+  padding: 0.75rem;
+  border-radius: var(--chrono-radius-md);
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.chrono-btn-auth-dark {
+  width: 100%;
+  padding: 0.875rem;
+  background-color: var(--chrono-emerald-950);
+  color: var(--chrono-amber-400);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  border-radius: var(--chrono-radius-md);
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--chrono-shadow-md);
+  transition: all 0.2s ease;
+}
+
+.chrono-btn-auth-dark:hover {
+  background-color: var(--chrono-emerald-900);
+}
+
+.chrono-btn-auth-amber {
+  width: 100%;
+  padding: 0.875rem;
+  background-color: var(--chrono-amber-500);
+  color: var(--chrono-emerald-950);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  border-radius: var(--chrono-radius-md);
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--chrono-shadow-md);
+  transition: all 0.2s ease;
+}
+
+.chrono-btn-auth-amber:hover {
+  background-color: var(--chrono-amber-400);
+}
+
+/* ==========================================================================
+   Account Dashboard & User Profile Styles
+   ========================================================================== */
+.chrono-account-banner {
+  background-color: var(--chrono-emerald-950);
+  background-image: radial-gradient(
+    circle at top right,
+    rgba(6, 78, 59, 0.5),
+    transparent 70%
+  );
+  color: #ffffff;
+  border-radius: var(--chrono-radius-2xl);
+  padding: 2.5rem 2rem;
+  margin-bottom: 2.5rem;
+  box-shadow: var(--chrono-shadow-xl);
+  border: 1px solid rgba(4, 120, 87, 0.4);
+}
+
+@media (min-width: 768px) {
+  .chrono-account-banner {
+    padding: 3rem 2.5rem;
+  }
+}
+
+.chrono-account-banner-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+@media (min-width: 768px) {
+  .chrono-account-banner-inner {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.chrono-user-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.chrono-avatar-ring {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 9999px;
+  background: linear-gradient(
+    135deg,
+    var(--chrono-amber-400),
+    var(--chrono-amber-600)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--chrono-emerald-950);
+  font-family: var(--chrono-font-serif);
+  font-size: 1.75rem;
+  font-weight: 800;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.25);
+  flex-shrink: 0;
+}
+
+.chrono-user-greeting {
+  font-family: var(--chrono-font-serif);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 0.35rem 0;
+  line-height: 1.2;
+}
+
+.chrono-user-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: rgba(245, 158, 11, 0.15);
+  color: var(--chrono-amber-400);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.chrono-account-actions-top {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.chrono-account-card {
+  background-color: #ffffff;
+  border: 1px solid var(--chrono-emerald-100);
+  border-radius: var(--chrono-radius-xl);
+  padding: 1.75rem;
+  box-shadow: var(--chrono-shadow-sm);
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
+}
+
+.chrono-account-card:hover {
+  box-shadow: var(--chrono-shadow-md);
+}
+
+.chrono-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--chrono-emerald-100);
+}
+
+.chrono-card-head-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--chrono-font-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--chrono-emerald-950);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.chrono-user-details-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .chrono-user-details-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.chrono-user-detail-item {
+  background-color: rgba(236, 253, 245, 0.5);
+  padding: 1.25rem;
+  border-radius: var(--chrono-radius-lg);
+  border: 1px solid rgba(209, 250, 229, 0.8);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.chrono-detail-lbl {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: rgba(6, 78, 59, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.chrono-detail-val {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--chrono-emerald-950);
+  word-break: break-all;
+}
+
+/* Orders Table */
+.chrono-table-container {
+  overflow-x: auto;
+  border-radius: var(--chrono-radius-md);
+  border: 1px solid var(--chrono-emerald-100);
+}
+
+.chrono-orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.chrono-orders-table th {
+  background-color: rgba(236, 253, 245, 0.8);
+  color: var(--chrono-emerald-950);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1rem 1.25rem;
+  border-bottom: 2px solid var(--chrono-emerald-100);
+}
+
+.chrono-orders-table td {
+  padding: 1rem 1.25rem;
+  font-size: 0.875rem;
+  border-bottom: 1px solid var(--chrono-emerald-50);
+  color: var(--chrono-emerald-950);
+}
+
+.chrono-orders-table tr:hover td {
+  background-color: rgba(236, 253, 245, 0.3);
+}
+
+.chrono-order-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.chrono-order-pill.new {
+  background-color: var(--chrono-amber-100);
+  color: var(--chrono-amber-600);
+  border: 1px solid var(--chrono-amber-200);
+}
+
+.chrono-order-pill.completed {
+  background-color: var(--chrono-emerald-100);
+  color: var(--chrono-emerald-700);
+  border: 1px solid var(--chrono-emerald-200);
+}
+
+.chrono-btn-danger-outline {
+  background: transparent;
+  border: 1px solid #f87171;
+  color: #dc2626;
+  padding: 0.5rem 1rem;
+  border-radius: var(--chrono-radius-md);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.2s ease;
+}
+
+.chrono-btn-danger-outline:hover {
+  background-color: #fee2e2;
+  border-color: #dc2626;
+}
+
+/* ==========================================================================
+   404 Not Found Page Styles
+   ========================================================================== */
+.chrono-404-container {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 1.5rem;
+}
+
+.chrono-404-number {
+  font-family: var(--chrono-font-serif);
+  font-size: 6rem;
+  font-weight: 800;
+  line-height: 1;
+  background: linear-gradient(
+    135deg,
+    var(--chrono-amber-500) 0%,
+    var(--chrono-amber-400) 45%,
+    var(--chrono-amber-600) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0 1rem 0;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 768px) {
+  .chrono-404-number {
+    font-size: 9rem;
+  }
+}
+
+.chrono-404-title {
+  font-family: var(--chrono-font-serif);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--chrono-emerald-950);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 1rem 0;
+}
+
+@media (min-width: 768px) {
+  .chrono-404-title {
+    font-size: 2.25rem;
+  }
+}
+
+.chrono-404-desc {
+  color: rgba(6, 78, 59, 0.7);
+  font-size: 1rem;
+  max-width: 32rem;
+  margin: 0 auto 2.5rem auto;
+  line-height: 1.6;
+}
+
+.chrono-404-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 3rem;
+}
+
+@media (min-width: 640px) {
+  .chrono-404-actions {
+    flex-direction: row;
+  }
+}
+
+.chrono-suggested-brands {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}

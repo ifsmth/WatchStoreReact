@@ -1,150 +1,234 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
+import { ShoppingCart, Trash2, CheckCircle2 } from "lucide-react";
 import { useCart } from "../contexts/CartContext.jsx";
 import { useAuth } from "../contexts/AuthContext.jsx";
-import PageHeading from "../components/ui/PageHeading.jsx";
-import AppButton from "../components/ui/AppButton.jsx";
 
 export default function CartPage() {
-  const {
-    cartItems,
-    updateQuantity,
-    removeFromCart,
-    cartTotal,
-    cartCount,
-    clearCart,
-  } = useCart();
-  const { user } = useAuth(); // ДОДАНО
-  const navigate = useNavigate(); // ДОДАНО
-  const [orderSuccess, setOrderSuccess] = useState(false); // ДОДАНО
+  const { cartItems, updateQuantity, removeFromCart, cartTotal, clearCart } =
+    useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [orderSuccess, setOrderSuccess] = useState(false);
+  const [notification, setNotification] = useState(null);
 
-  // Якщо кошик порожній
-  if (cartItems.length === 0) {
-    return (
-      <section
-        className="empty-state"
-        style={{ textAlign: "center", marginTop: "3rem", padding: "4rem 1rem" }}
-      >
-        <span
-          style={{
-            fontSize: "3.5rem",
-            display: "block",
-            marginBottom: "1rem",
-            opacity: 0.8,
-          }}
-        >
-          🛒
-        </span>
-        <h2>Ваш кошик порожній</h2>
-        <p style={{ color: "#686861", marginBottom: "2rem" }}>
-          Зробіть свою першу покупку, додавши товар з каталогу.
-        </p>
-        <Link className="app-button app-button-primary" to="/products">
-          Перейти до каталогу
-        </Link>
-      </section>
-    );
-  }
+  const showNotification = (msg) => {
+    setNotification(msg);
+    setTimeout(() => setNotification(null), 3000);
+  };
 
-  // Обробка натискання на кнопку оформлення
   const handleCheckout = () => {
     if (!user) {
-      navigate("/login"); // Не залогінений -> на вхід
+      navigate("/login");
     } else {
       setOrderSuccess(true);
-      clearCart(); // Очищаємо кошик після "успішного" замовлення
+      clearCart();
     }
   };
 
-  // Екран успішного оформлення
   if (orderSuccess) {
     return (
-      <section
-        className="empty-state"
-        style={{ textAlign: "center", marginTop: "3rem", padding: "4rem 1rem" }}
+      <div
+        className="chrono-container"
+        style={{ maxWidth: "42rem", padding: "4rem 1rem", textAlign: "center" }}
       >
-        <span
-          style={{ fontSize: "3.5rem", display: "block", marginBottom: "1rem" }}
+        <div
+          style={{
+            backgroundColor: "#ffffff",
+            padding: "3rem 2rem",
+            borderRadius: "var(--chrono-radius-2xl)",
+            border: "1px solid var(--chrono-emerald-100)",
+            boxShadow: "var(--chrono-shadow-sm)",
+          }}
         >
-          🎉
-        </span>
-        <h2>Замовлення успішно оформлено!</h2>
-        <p style={{ color: "#686861", marginBottom: "2rem" }}>
-          Дякуємо за покупку, <strong>{user.name}</strong>. Наш менеджер
-          зв'яжеться з Вами найближчим часом для підтвердження.
-        </p>
-        <Link className="app-button app-button-primary" to="/products">
-          Повернутися до каталогу
-        </Link>
-      </section>
+          <CheckCircle2
+            size={64}
+            color="#10b981"
+            style={{ margin: "0 auto 1.5rem auto", display: "block" }}
+          />
+          <h1
+            style={{
+              fontSize: "1.75rem",
+              fontFamily: "var(--chrono-font-serif)",
+              color: "var(--chrono-emerald-950)",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+              marginBottom: "1rem",
+            }}
+          >
+            Замовлення успішно оформлено!
+          </h1>
+          <p
+            style={{
+              color: "rgba(6, 78, 59, 0.7)",
+              fontSize: "0.875rem",
+              lineHeight: 1.6,
+              marginBottom: "2rem",
+              maxWidth: "28rem",
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+          >
+            Дякуємо за покупку, <strong>{user?.name}</strong>! Наш менеджер
+            зателефонує вам найближчим часом для підтвердження деталей доставки.
+          </p>
+          <Link to="/products" className="chrono-btn-primary">
+            Повернутися до каталогу
+          </Link>
+        </div>
+      </div>
     );
   }
 
   return (
-    <section aria-labelledby="cart-title">
-      <PageHeading title="Ваш кошик" />
+    <div
+      className="chrono-container"
+      style={{ maxWidth: "48rem", paddingTop: "3rem", paddingBottom: "4rem" }}
+    >
+      {/* Toast Notification */}
+      {notification && (
+        <div className="chrono-toast">
+          <CheckCircle2 size={16} />
+          <span>{notification}</span>
+        </div>
+      )}
 
-      <div className="order-editor-layout">
-        {/* Список товарів у кошику */}
-        <div className="order-form-container" style={{ padding: "1rem" }}>
-          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-            {cartItems.map((item) => (
-              <li
-                key={item.product.id}
-                style={{
-                  display: "flex",
-                  gap: "1rem",
-                  borderBottom: "1px solid #dedbd3",
-                  paddingBottom: "1rem",
-                  marginBottom: "1rem",
-                }}
-              >
-                {/* Заглушка для фото */}
+      <h1
+        style={{
+          fontSize: "2rem",
+          fontWeight: 700,
+          color: "var(--chrono-emerald-950)",
+          fontFamily: "var(--chrono-font-serif)",
+          textTransform: "uppercase",
+          letterSpacing: "0.05em",
+          marginBottom: "2rem",
+        }}
+      >
+        Ваш кошик
+      </h1>
+
+      {cartItems.length === 0 ? (
+        <div
+          style={{
+            backgroundColor: "#ffffff",
+            padding: "3rem 2rem",
+            borderRadius: "var(--chrono-radius-2xl)",
+            border: "1px solid var(--chrono-emerald-100)",
+            textAlign: "center",
+          }}
+        >
+          <ShoppingCart
+            size={64}
+            color="rgba(6, 78, 59, 0.2)"
+            style={{ margin: "0 auto 1rem auto", display: "block" }}
+          />
+          <h2
+            style={{
+              fontSize: "1.25rem",
+              fontWeight: 700,
+              color: "var(--chrono-emerald-950)",
+              marginBottom: "0.5rem",
+            }}
+          >
+            Кошик порожній
+          </h2>
+          <p
+            style={{
+              fontSize: "0.875rem",
+              color: "rgba(6, 78, 59, 0.6)",
+              marginBottom: "1.5rem",
+            }}
+          >
+            Ви ще не додали жодного годинника до вашого замовлення.
+          </p>
+          <Link to="/products" className="chrono-btn-primary">
+            Перейти до каталогу
+          </Link>
+        </div>
+      ) : (
+        <div
+          style={{
+            backgroundColor: "#ffffff",
+            padding: "1.5rem",
+            borderRadius: "var(--chrono-radius-2xl)",
+            border: "1px solid var(--chrono-emerald-100)",
+            boxShadow: "var(--chrono-shadow-sm)",
+          }}
+        >
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+          >
+            {cartItems.map((item) => {
+              const product = item.product;
+              const img =
+                product.images?.[0] ||
+                product.image ||
+                "https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&q=80&w=600";
+
+              return (
                 <div
+                  key={product.id}
                   style={{
-                    width: "90px",
-                    height: "90px",
-                    background: "#e7e8e0",
-                    flexShrink: 0,
-                    display: "grid",
-                    placeItems: "center",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    paddingBottom: "1rem",
+                    borderBottom: "1px solid rgba(209, 250, 229, 0.6)",
+                    gap: "1rem",
+                    flexWrap: "wrap",
                   }}
                 >
-                  <span style={{ fontSize: "2rem" }}>⌚</span>
-                </div>
-
-                {/* Інформація про товар */}
-                <div style={{ flexGrow: 1 }}>
-                  <Link
-                    to={`/products/${item.product.id}`}
-                    style={{
-                      fontWeight: "bold",
-                      textDecoration: "none",
-                      color: "#1d2224",
-                      fontSize: "1.1rem",
-                    }}
-                  >
-                    {item.product.title}
-                  </Link>
-                  <p
-                    style={{
-                      margin: "0.25rem 0",
-                      color: "#a74f30",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {item.product.price.toLocaleString("uk-UA")} ₴
-                  </p>
-
-                  {/* Лічильник кількості */}
                   <div
                     style={{
                       display: "flex",
                       alignItems: "center",
                       gap: "1rem",
-                      marginTop: "0.5rem",
                     }}
                   >
+                    <img
+                      src={img}
+                      alt={product.title || product.name}
+                      style={{
+                        width: "4rem",
+                        height: "4rem",
+                        objectFit: "contain",
+                        backgroundColor: "var(--chrono-bg-photo)",
+                        borderRadius: "var(--chrono-radius-md)",
+                        padding: "0.5rem",
+                      }}
+                    />
+                    <div>
+                      <h4
+                        style={{
+                          fontWeight: 700,
+                          color: "var(--chrono-emerald-950)",
+                          fontSize: "0.875rem",
+                          margin: "0 0 0.25rem 0",
+                        }}
+                      >
+                        {product.title || product.name}
+                      </h4>
+                      <p
+                        style={{
+                          fontSize: "0.8125rem",
+                          color: "var(--chrono-amber-600)",
+                          fontWeight: 700,
+                          margin: 0,
+                        }}
+                      >
+                        {Number(product.price).toLocaleString("uk-UA")} ₴
+                      </p>
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "1.5rem",
+                    }}
+                  >
+                    {/* Quantity controls */}
                     <div
                       style={{
                         display: "flex",
@@ -152,101 +236,118 @@ export default function CartPage() {
                         gap: "0.5rem",
                       }}
                     >
-                      <AppButton
-                        variant="secondary"
-                        style={{ padding: "0.2rem 0.6rem" }}
+                      <button
+                        type="button"
                         onClick={() =>
-                          updateQuantity(item.product.id, item.quantity - 1)
+                          updateQuantity(
+                            product.id,
+                            Math.max(1, item.quantity - 1),
+                          )
                         }
-                        disabled={item.quantity <= 1}
+                        style={{
+                          width: "2rem",
+                          height: "2rem",
+                          borderRadius: "var(--chrono-radius-sm)",
+                          border: "1px solid var(--chrono-emerald-200)",
+                          backgroundColor: "var(--chrono-emerald-50)",
+                          cursor: "pointer",
+                          fontWeight: 700,
+                        }}
                       >
                         -
-                      </AppButton>
+                      </button>
                       <span
                         style={{
-                          fontWeight: "bold",
+                          fontWeight: 700,
+                          fontSize: "0.875rem",
                           minWidth: "1.5rem",
                           textAlign: "center",
                         }}
                       >
                         {item.quantity}
                       </span>
-                      <AppButton
-                        variant="secondary"
-                        style={{ padding: "0.2rem 0.6rem" }}
+                      <button
+                        type="button"
                         onClick={() =>
-                          updateQuantity(item.product.id, item.quantity + 1)
+                          updateQuantity(product.id, item.quantity + 1)
                         }
-                        disabled={item.quantity >= item.product.stock}
+                        style={{
+                          width: "2rem",
+                          height: "2rem",
+                          borderRadius: "var(--chrono-radius-sm)",
+                          border: "1px solid var(--chrono-emerald-200)",
+                          backgroundColor: "var(--chrono-emerald-50)",
+                          cursor: "pointer",
+                          fontWeight: 700,
+                        }}
                       >
                         +
-                      </AppButton>
+                      </button>
                     </div>
+
                     <button
-                      onClick={() => removeFromCart(item.product.id)}
+                      type="button"
+                      onClick={() => removeFromCart(product.id)}
                       style={{
-                        color: "#d32f2f",
                         background: "none",
                         border: "none",
+                        color: "#ef4444",
                         cursor: "pointer",
-                        fontSize: "0.85rem",
-                        textDecoration: "underline",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.25rem",
+                        fontSize: "0.75rem",
                       }}
+                      title="Видалити з кошика"
                     >
-                      Видалити
+                      <Trash2 size={16} />
                     </button>
                   </div>
                 </div>
+              );
+            })}
+          </div>
 
-                {/* Сума за позицію */}
-                <div
-                  style={{
-                    fontWeight: "bold",
-                    fontSize: "1.2rem",
-                    textAlign: "right",
-                  }}
-                >
-                  {(item.product.price * item.quantity).toLocaleString("uk-UA")}{" "}
-                  ₴
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Підсумок кошика */}
-        <div className="order-summary-container">
-          <h3>Підсумок</h3>
-          <dl>
-            <dt>Кількість товарів:</dt>
-            <dd>{cartCount} шт.</dd>
-            <dt>Загальна сума:</dt>
-            <dd
+          <div
+            style={{
+              paddingTop: "1.5rem",
+              marginTop: "0.5rem",
+              borderTop: "2px solid var(--chrono-emerald-100)",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <span
               style={{
-                color: "#e2ae79",
-                fontSize: "1.6rem",
-                marginTop: "0.5rem",
+                fontWeight: 700,
+                color: "var(--chrono-emerald-950)",
+                fontSize: "1rem",
+              }}
+            >
+              Загальна сума:
+            </span>
+            <span
+              style={{
+                fontSize: "1.5rem",
+                fontWeight: 800,
+                color: "var(--chrono-amber-600)",
               }}
             >
               {cartTotal.toLocaleString("uk-UA")} ₴
-            </dd>
-          </dl>
+            </span>
+          </div>
 
-          <AppButton
-            className="app-button app-button-primary"
-            style={{
-              width: "100%",
-              marginTop: "2rem",
-              backgroundColor: "#e2ae79",
-              color: "#253432",
-              borderColor: "#e2ae79",
-            }}
+          <button
+            type="button"
             onClick={handleCheckout}
+            className="chrono-btn-primary"
+            style={{ width: "100%", marginTop: "1.5rem", padding: "1rem" }}
           >
-            {user ? "Підтвердити покупку" : "Увійдіть для оформлення"}
-          </AppButton>
+            Оформити замовлення
+          </button>
         </div>
-      </div>
-    </section>
+      )}
+    </div>
   );
 }

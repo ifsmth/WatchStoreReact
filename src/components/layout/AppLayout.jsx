@@ -1,22 +1,15 @@
 import { Outlet } from "react-router";
 import SiteHeader from "./SiteHeader.jsx";
-
-const navigationLinks = [
-  { to: "/", label: "Головна", end: true },
-  { to: "/products", label: "Каталог" },
-  { to: "/about", label: "Про нас" },
-  // { to: "/orders", label: "Замовлення (тимчасово)" }, // Потім замінимо на Кошик та Кабінет
-];
+import SiteFooter from "./SiteFooter.jsx";
 
 export default function AppLayout() {
   return (
-    <>
-      <SiteHeader title="Магазин годинників" links={navigationLinks} />
-      <main id="main-content" tabIndex={-1}>
-        {/* Сюди підставлятимуться сторінки з нашого дерева Route */}
+    <div className="chrono-app-layout">
+      <SiteHeader />
+      <main id="main-content" className="chrono-main" tabIndex={-1}>
         <Outlet />
       </main>
-      <footer>Навчальний проєкт.</footer>
-    </>
+      <SiteFooter />
+    </div>
   );
 }
