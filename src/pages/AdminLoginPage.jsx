@@ -13,11 +13,13 @@ export default function AdminLoginPage() {
     e.preventDefault();
     setError("");
 
-    const success = login(email, password);
-    if (success) {
+    // Викликаємо login і явно вказуємо, що чекаємо на роль "admin"
+    const result = login(email, password, "admin");
+
+    if (result.success) {
       navigate("/admin");
     } else {
-      setError("Невірний логін або пароль адміністратора.");
+      setError(result.message);
     }
   };
 

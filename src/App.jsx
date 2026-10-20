@@ -9,8 +9,8 @@ import { ProductSelectionProvider } from "./contexts/ProductSelectionContext.jsx
 import HomePage from "./pages/HomePage.jsx";
 import CatalogContainer from "./containers/CatalogContainer.jsx";
 import ProductDetailsPage from "./pages/ProductDetailsPage.jsx";
-import OrdersPage from "./pages/OrdersPage.jsx";
-import OrderCreatePage from "./pages/OrderCreatePage.jsx";
+// import OrdersPage from "./pages/OrdersPage.jsx";
+// import OrderCreatePage from "./pages/OrderCreatePage.jsx";
 import OrderEditPage from "./pages/OrderEditPage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import OrderDetailsPage from "./pages/OrderDetailsPage.jsx";
@@ -42,6 +42,8 @@ import AdminProductFormPage from "./pages/AdminProductFormPage.jsx";
 
 import AdminBrandsPage from "./pages/AdminBrandsPage.jsx";
 import AdminUsersPage from "./pages/AdminUsersPage.jsx";
+
+import AdminOrdersPage from "./pages/AdminOrdersPage.jsx";
 
 // Дані
 import { products } from "./data/products.js";
@@ -126,39 +128,31 @@ export default function App() {
                   />
                 </Route>
 
-                {/* 2. ГІЛКА АДМІНКИ (НОВА) */}
-                <Route path="/admin/login" element={<AdminLoginPage />} />
+                {/* Обробка невідомих адрес */}
+                <Route path="*" element={<NotFoundPage />} />
+              </Route>
 
-                <Route path="/admin" element={<AdminLayout />}>
-                  <Route index element={<AdminDashboardPage />} />
+              {/* 2. ГІЛКА АДМІНКИ (НОВА) */}
+              <Route path="/admin/login" element={<AdminLoginPage />} />
 
-                  <Route path="products">
-                    <Route index element={<AdminProductsPage />} />
-                    <Route path="create" element={<AdminProductFormPage />} />
-                    <Route path="edit/:id" element={<AdminProductFormPage />} />
-                  </Route>
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminDashboardPage />} />
 
-                  <Route path="orders">
-                    <Route
-                      index
-                      element={<OrdersPage orders={orders} items={products} />}
-                    />
-                    <Route
-                      path=":orderId"
-                      element={<OrderDetailsPage items={products} />}
-                    />
-                    <Route
-                      path=":orderId/edit"
-                      element={
-                        <OrderEditPage orders={orders} items={products} />
-                      }
-                    />
-                  </Route>
-
-                  {/* НОВІ ПІДКЛЮЧЕНІ СТОРІНКИ */}
-                  <Route path="brands" element={<AdminBrandsPage />} />
-                  <Route path="users" element={<AdminUsersPage />} />
+                <Route path="products">
+                  <Route index element={<AdminProductsPage />} />
+                  <Route path="create" element={<AdminProductFormPage />} />
+                  <Route path="edit/:id" element={<AdminProductFormPage />} />
                 </Route>
+
+                <Route path="orders">
+                  <Route index element={<AdminOrdersPage />} />
+                  <Route path=":orderId" element={<OrderDetailsPage />} />
+                  <Route path=":orderId/edit" element={<OrderEditPage />} />
+                </Route>
+
+                {/* НОВІ ПІДКЛЮЧЕНІ СТОРІНКИ */}
+                <Route path="brands" element={<AdminBrandsPage />} />
+                <Route path="users" element={<AdminUsersPage />} />
 
                 {/* Обробка невідомих адрес */}
                 <Route path="*" element={<NotFoundPage />} />

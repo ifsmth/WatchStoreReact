@@ -1,5 +1,7 @@
 import { Outlet, NavLink, useNavigate, Navigate } from "react-router";
 import { useAuth } from "../../contexts/AuthContext.jsx";
+import AdminHeader from "./AdminHeader.jsx";
+import AdminFooter from "./AdminFooter.jsx";
 
 export default function AdminLayout() {
   const { user, logout } = useAuth();
@@ -36,7 +38,7 @@ export default function AdminLayout() {
         fontFamily: "'Manrope', sans-serif",
       }}
     >
-      {/* Бокове меню (Sidebar) */}
+      {/* Бокове меню (Sidebar) залишається тут, бо воно частина структурної сітки */}
       <aside
         style={{
           width: "260px",
@@ -85,6 +87,7 @@ export default function AdminLayout() {
             border: "1px solid #e2ae79",
             cursor: "pointer",
             fontWeight: "bold",
+            borderRadius: "4px",
           }}
         >
           Вийти з панелі
@@ -93,29 +96,16 @@ export default function AdminLayout() {
 
       {/* Основна частина */}
       <div style={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
-        {/* Верхня шапка (Header) */}
-        <header
-          style={{
-            backgroundColor: "#fffefa",
-            padding: "1.2rem 2rem",
-            borderBottom: "1px solid #dedbd3",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <h1 style={{ fontSize: "1.2rem", margin: 0, color: "#1d2224" }}>
-            Панель управління
-          </h1>
-          <span style={{ fontWeight: "600", color: "#4a504a" }}>
-            Вітаємо, {user.name}
-          </span>
-        </header>
+        {/* Використовуємо наш новий ізольований компонент Header */}
+        <AdminHeader />
 
         {/* Контент сторінок */}
         <main style={{ padding: "2rem", overflowY: "auto", flexGrow: 1 }}>
           <Outlet />
         </main>
+
+        {/* Використовуємо наш новий ізольований компонент Footer */}
+        <AdminFooter />
       </div>
     </div>
   );

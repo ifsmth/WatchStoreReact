@@ -24,11 +24,13 @@ export default function LoginPage() {
       return;
     }
 
-    const success = login(email, password);
-    if (success) {
-      navigate("/"); // Після входу перекидаємо на головну
+    // Викликаємо login і явно вказуємо, що чекаємо на роль "user"
+    const result = login(email, password, "user");
+
+    if (result.success) {
+      navigate("/");
     } else {
-      setError("Помилка входу. Спробуйте ще раз.");
+      setError(result.message); // Виводимо конкретну помилку з контексту
     }
   };
 
