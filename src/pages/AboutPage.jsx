@@ -21,7 +21,10 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
+import { useMessages } from "../contexts/MessagesContext.jsx";
+
 export default function AboutPage() {
+  const { addMessage } = useMessages();
   const [activeFaq, setActiveFaq] = useState(null);
   const [contactSubmitted, setContactSubmitted] = useState(false);
   const [formData, setFormData] = useState({
@@ -32,6 +35,13 @@ export default function AboutPage() {
 
   const handleContactSubmit = (e) => {
     e.preventDefault();
+    if (formData.name.trim() && formData.contact.trim()) {
+      addMessage({
+        name: formData.name,
+        contact: formData.contact,
+        message: formData.message,
+      });
+    }
     setContactSubmitted(true);
     setFormData({ name: "", contact: "", message: "" });
     setTimeout(() => setContactSubmitted(false), 5000);

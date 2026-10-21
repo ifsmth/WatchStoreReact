@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router";
-import PageHeading from "../components/ui/PageHeading.jsx";
-import AppButton from "../components/ui/AppButton.jsx";
+import { ArrowLeft, Save, X } from "lucide-react";
 import { useOrders } from "../contexts/OrdersContext.jsx";
 import NotFoundPage from "./NotFoundPage.jsx";
 
@@ -48,7 +47,6 @@ export default function OrderEditPage() {
       return;
     }
 
-    // Зливаємо оновлені дані з існуючим замовленням
     const updatedOrder = {
       ...order,
       customer: {
@@ -57,7 +55,6 @@ export default function OrderEditPage() {
         phone: formData.phone,
         email: formData.email,
       },
-      // Для сумісності залишаємо старі поля, якщо вони були
       customerName: formData.customerName,
       phone: formData.phone,
       comment: formData.comment,
@@ -66,101 +63,98 @@ export default function OrderEditPage() {
     const result = await updateOrder(order.id, updatedOrder);
 
     if (result.ok) {
-      navigate(`/admin/orders/${order.id}`); // Повертаємось на сторінку деталей
+      navigate(`/admin/orders/${order.id}`);
     } else {
       setError("Помилка при збереженні змін.");
     }
   };
 
   return (
-    <section style={{ maxWidth: "600px" }}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "1rem",
-          marginBottom: "2rem",
-        }}
-      >
-        <Link
-          to={`/admin/orders/${order.id}`}
-          style={{
-            textDecoration: "none",
-            color: "#686861",
-            fontSize: "1.5rem",
-          }}
-        >
-          ←
-        </Link>
-        <PageHeading
-          title={`Редагування даних #${order.id.toString().slice(-4)}`}
-        />
+    <section className="admin-container-sm">
+      <div className="admin-page-header">
+        <div className="admin-page-title-wrap">
+          <Link
+            to={`/admin/orders/${order.id}`}
+            className="admin-back-btn"
+            title="Назад до деталей замовлення"
+          >
+            <ArrowLeft size={18} />
+          </Link>
+          <div>
+            <h2 className="admin-page-title">
+              Редагування #{order.id.toString().slice(-4)}
+            </h2>
+            <p className="admin-page-subtitle">
+              Зміна контактної інформації отримувача
+            </p>
+          </div>
+        </div>
       </div>
 
-      <div className="order-form-container">
-        <form onSubmit={handleSubmit} noValidate>
-          {error && (
-            <p role="alert" className="field-error">
-              {error}
-            </p>
-          )}
+      <div className="admin-card">
+        {error && <div className="admin-alert-error">{error}</div>}
 
-          <div className="form-field">
-            <label>Ім'я клієнта *</label>
+        <form onSubmit={handleSubmit}>
+          <div className="admin-form-group">
+            <label className="admin-form-label">Ім'я клієнта *</label>
             <input
+              required
               type="text"
               name="customerName"
               value={formData.customerName}
               onChange={handleChange}
+              className="admin-input"
+              placeholder="Іван Франко"
             />
           </div>
 
-          <div className="form-field">
-            <label>Телефон</label>
+          <div className="admin-form-group">
+            <label className="admin-form-label">Телефон клієнта</label>
             <input
-              type="text"
+              type="tel"
               name="phone"
               value={formData.phone}
               onChange={handleChange}
+              className="admin-input"
+              placeholder="+380..."
             />
           </div>
 
-          <div className="form-field">
-            <label>Електронна пошта</label>
+          <div className="admin-form-group">
+            <label className="admin-form-label">Email</label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
+              className="admin-input"
+              placeholder="client@example.com"
             />
           </div>
 
-          <div className="form-field">
-            <label>Коментар до замовлення</label>
+          <div className="admin-form-group">
+            <label className="admin-form-label">Коментар до замовлення</label>
             <textarea
               name="comment"
-              rows="4"
+              rows="3"
               value={formData.comment}
               onChange={handleChange}
-            ></textarea>
+              className="admin-textarea"
+              placeholder="Особливі побажання щодо доставки або часу дзвінка..."
+            />
           </div>
 
-          <div
-            className="form-actions"
-            style={{
-              marginTop: "2.5rem",
-              borderTop: "1px solid #dedbd3",
-              paddingTop: "1.5rem",
-            }}
-          >
-            <AppButton type="submit" className="app-button app-button-primary">
-              Зберегти зміни
-            </AppButton>
+          <div className="admin-form-actions">
+            <button type="submit" className="admin-btn admin-btn-accent">
+              <Save size={16} />
+              <span>Зберегти зміни</span>
+            </button>
             <Link
               to={`/admin/orders/${order.id}`}
-              className="app-button app-button-secondary"
+              className="admin-btn admin-btn-secondary"
             >
-              Скасувати
+              <X size={16} />
+              <span>Скасувати</span>
             </Link>
           </div>
         </form>

@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router";
+import { ArrowLeft, Save, X } from "lucide-react";
 import { products, brands } from "../data/products.js";
-import PageHeading from "../components/ui/PageHeading.jsx";
-import AppButton from "../components/ui/AppButton.jsx";
 
 export default function AdminProductFormPage() {
-  const { id } = useParams(); // Якщо id є, значить це редагування
+  const { id } = useParams();
   const navigate = useNavigate();
   const isEditing = Boolean(id);
 
@@ -46,7 +45,6 @@ export default function AdminProductFormPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Тут в майбутньому буде запит до бекенду
     alert(
       isEditing ? "Зміни успішно збережено!" : "Новий товар успішно додано!",
     );
@@ -54,63 +52,54 @@ export default function AdminProductFormPage() {
   };
 
   return (
-    <section style={{ maxWidth: "800px" }}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "1rem",
-          marginBottom: "2rem",
-        }}
-      >
-        <Link
-          to="/admin/products"
-          style={{
-            textDecoration: "none",
-            color: "#686861",
-            fontSize: "1.5rem",
-          }}
-        >
-          ←
-        </Link>
-        <PageHeading
-          title={isEditing ? "Редагування товару" : "Створення нового товару"}
-        />
+    <section className="admin-container-lg">
+      <div className="admin-page-header">
+        <div className="admin-page-title-wrap">
+          <Link
+            to="/admin/products"
+            className="admin-back-btn"
+            title="Назад до товарів"
+          >
+            <ArrowLeft size={18} />
+          </Link>
+          <div>
+            <h2 className="admin-page-title">
+              {isEditing ? "Редагування товару" : "Створення нового товару"}
+            </h2>
+            <p className="admin-page-subtitle">
+              {isEditing
+                ? `Редагування параметрів товару #${id}`
+                : "Внесіть характеристики нового наручного годинника"}
+            </p>
+          </div>
+        </div>
       </div>
 
-      <div className="order-form-container">
+      <div className="admin-card">
         <form onSubmit={handleSubmit}>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "1.5rem",
-            }}
-          >
+          <div className="admin-form-grid-2">
             {/* Ліва колонка */}
             <div>
-              <div className="form-field">
-                <label>Назва годинника *</label>
+              <div className="admin-form-group">
+                <label className="admin-form-label">Назва годинника *</label>
                 <input
                   required
                   type="text"
                   name="title"
                   value={formData.title}
                   onChange={handleChange}
+                  className="admin-input"
+                  placeholder="Наприклад: Tissot PRX"
                 />
               </div>
 
-              <div className="form-field">
-                <label>Бренд *</label>
+              <div className="admin-form-group">
+                <label className="admin-form-label">Бренд *</label>
                 <select
                   name="brand_id"
                   value={formData.brand_id}
                   onChange={handleChange}
-                  style={{
-                    width: "100%",
-                    padding: "0.7rem",
-                    border: "1px solid #a9aaa3",
-                  }}
+                  className="admin-select"
                 >
                   {brands.map((b) => (
                     <option key={b.id} value={b.id}>
@@ -120,41 +109,40 @@ export default function AdminProductFormPage() {
                 </select>
               </div>
 
-              <div className="form-field">
-                <label>Ціна (₴) *</label>
+              <div className="admin-form-group">
+                <label className="admin-form-label">Ціна (₴) *</label>
                 <input
                   required
                   type="number"
                   min="0"
+                  step="0.01"
                   name="price"
                   value={formData.price}
                   onChange={handleChange}
+                  className="admin-input"
+                  placeholder="0.00"
                 />
               </div>
 
-              <div className="form-field">
-                <label>Залишок на складі (шт) *</label>
+              <div className="admin-form-group">
+                <label className="admin-form-label">Кількість на складі</label>
                 <input
-                  required
                   type="number"
                   min="0"
                   name="stock"
                   value={formData.stock}
                   onChange={handleChange}
+                  className="admin-input"
                 />
               </div>
 
-              <div className="form-field">
-                <label>Стать</label>
+              <div className="admin-form-group">
+                <label className="admin-form-label">Стать</label>
                 <select
                   name="gender"
                   value={formData.gender}
                   onChange={handleChange}
-                  style={{
-                    width: "100%",
-                    padding: "0.7rem",
-                    border: "1px solid #a9aaa3",
-                  }}
+                  className="admin-select"
                 >
                   <option value="Чоловічий">Чоловічий</option>
                   <option value="Жіночий">Жіночий</option>
@@ -165,80 +153,84 @@ export default function AdminProductFormPage() {
 
             {/* Права колонка */}
             <div>
-              <div className="form-field">
-                <label>Механізм</label>
-                <input
-                  type="text"
+              <div className="admin-form-group">
+                <label className="admin-form-label">Тип механізму</label>
+                <select
                   name="mechanism"
                   value={formData.mechanism}
                   onChange={handleChange}
-                  placeholder="Наприклад: Кварцовий"
-                />
+                  className="admin-select"
+                >
+                  <option value="Кварцовий">Кварцовий</option>
+                  <option value="Механічний">Механічний</option>
+                  <option value="Механічний з автопідзаводом">
+                    Механічний з автопідзаводом
+                  </option>
+                </select>
               </div>
 
-              <div className="form-field">
-                <label>Скло</label>
+              <div className="admin-form-group">
+                <label className="admin-form-label">Тип скла</label>
                 <input
                   type="text"
                   name="glass"
                   value={formData.glass}
                   onChange={handleChange}
-                  placeholder="Наприклад: Сапфірове"
+                  className="admin-input"
+                  placeholder="Сапфірове / Мінеральне"
                 />
               </div>
 
-              <div className="form-field">
-                <label>Матеріал ремінця</label>
+              <div className="admin-form-group">
+                <label className="admin-form-label">Матеріал ремінця</label>
                 <input
                   type="text"
                   name="strap_material"
                   value={formData.strap_material}
                   onChange={handleChange}
+                  className="admin-input"
+                  placeholder="Натуральна шкіра / Сталь"
                 />
               </div>
 
-              <div className="form-field">
-                <label>Водозахист</label>
+              <div className="admin-form-group">
+                <label className="admin-form-label">Водозахист</label>
                 <input
                   type="text"
                   name="water_resistance"
                   value={formData.water_resistance}
                   onChange={handleChange}
-                  placeholder="Наприклад: 5 ATM"
+                  className="admin-input"
+                  placeholder="30m / 50m / 100m"
                 />
               </div>
             </div>
           </div>
 
-          <div
-            className="form-field"
-            style={{ maxWidth: "100%", marginTop: "1rem" }}
-          >
-            <label>Опис товару</label>
+          {/* Опис на всю ширину */}
+          <div className="admin-form-group admin-form-group-mt">
+            <label className="admin-form-label">Опис товару</label>
             <textarea
               name="description"
-              rows="5"
+              rows="4"
               value={formData.description}
               onChange={handleChange}
-            ></textarea>
+              className="admin-textarea"
+              placeholder="Детальний опис товару..."
+            />
           </div>
 
-          <div
-            className="form-actions"
-            style={{
-              marginTop: "2rem",
-              borderTop: "1px solid #dedbd3",
-              paddingTop: "1.5rem",
-            }}
-          >
-            <AppButton type="submit" className="app-button app-button-primary">
-              {isEditing ? "Зберегти зміни" : "Створити товар"}
-            </AppButton>
+          <div className="admin-form-actions">
+            <button type="submit" className="admin-btn admin-btn-accent">
+              <Save size={16} />
+              <span>{isEditing ? "Зберегти зміни" : "Створити товар"}</span>
+            </button>
             <Link
               to="/admin/products"
-              className="app-button app-button-secondary"
+              className="admin-btn admin-btn-secondary"
             >
-              Скасувати
+              <X size={16} />
+              <span>Скасувати</span>
             </Link>
           </div>
         </form>

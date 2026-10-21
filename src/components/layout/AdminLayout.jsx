@@ -1,10 +1,21 @@
 import { Outlet, NavLink, useNavigate, Navigate } from "react-router";
+import {
+  LayoutDashboard,
+  Watch,
+  Tag,
+  Package,
+  Users,
+  MessageSquare,
+  LogOut,
+} from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext.jsx";
+import { useMessages } from "../../contexts/MessagesContext.jsx";
 import AdminHeader from "./AdminHeader.jsx";
 import AdminFooter from "./AdminFooter.jsx";
 
 export default function AdminLayout() {
   const { user, logout } = useAuth();
+  const { newCount } = useMessages();
   const navigate = useNavigate();
 
   // Захист маршруту: якщо не адмін — викидаємо
@@ -17,94 +28,106 @@ export default function AdminLayout() {
     navigate("/admin/login");
   };
 
-  const navLinkStyle = ({ isActive }) => ({
-    display: "block",
-    padding: "0.75rem 1rem",
-    color: isActive ? "#e2ae79" : "#d8ded8",
-    backgroundColor: isActive ? "#182522" : "transparent",
-    textDecoration: "none",
-    fontWeight: "600",
-    borderRadius: "4px",
-    marginBottom: "0.5rem",
-    transition: "background 0.2s",
-  });
-
   return (
-    <div
-      style={{
-        display: "flex",
-        minHeight: "100vh",
-        backgroundColor: "#f7f5f0",
-        fontFamily: "'Manrope', sans-serif",
-      }}
-    >
-      {/* Бокове меню (Sidebar) залишається тут, бо воно частина структурної сітки */}
-      <aside
-        style={{
-          width: "260px",
-          backgroundColor: "#253432",
-          color: "white",
-          padding: "1.5rem",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <h2
-          style={{
-            color: "#e2ae79",
-            fontSize: "1.3rem",
-            marginBottom: "2rem",
-            fontFamily: "'Playfair Display', serif",
-          }}
-        >
-          WatchStore Admin
-        </h2>
+    <div className="admin-layout">
+      {/* Бокове меню (Sidebar) */}
+      <aside className="admin-sidebar">
+        <div className="admin-sidebar-header">
+          <div className="admin-sidebar-icon">
+            <Watch size={24} />
+          </div>
+          <div>
+            <h2 className="admin-sidebar-logo">ChronoClassic</h2>
+            <span className="admin-sidebar-tag">Панель керування</span>
+          </div>
+        </div>
 
-        <nav style={{ flexGrow: 1 }}>
-          <NavLink to="/admin" end style={navLinkStyle}>
-            📊 Дашборд
+        <nav className="admin-nav">
+          <NavLink
+            to="/admin"
+            end
+            className={({ isActive }) =>
+              `admin-nav-link ${isActive ? "active" : ""}`
+            }
+          >
+            <LayoutDashboard size={18} />
+            <span>Дашборд</span>
           </NavLink>
-          <NavLink to="/admin/products" style={navLinkStyle}>
-            ⌚ Товари
+
+          <NavLink
+            to="/admin/products"
+            className={({ isActive }) =>
+              `admin-nav-link ${isActive ? "active" : ""}`
+            }
+          >
+            <Watch size={18} />
+            <span>Товари</span>
           </NavLink>
-          <NavLink to="/admin/brands" style={navLinkStyle}>
-            🏷️ Бренди
+
+          <NavLink
+            to="/admin/brands"
+            className={({ isActive }) =>
+              `admin-nav-link ${isActive ? "active" : ""}`
+            }
+          >
+            <Tag size={18} />
+            <span>Бренди</span>
           </NavLink>
-          <NavLink to="/admin/orders" style={navLinkStyle}>
-            📦 Замовлення
+
+          <NavLink
+            to="/admin/orders"
+            className={({ isActive }) =>
+              `admin-nav-link ${isActive ? "active" : ""}`
+            }
+          >
+            <Package size={18} />
+            <span>Замовлення</span>
           </NavLink>
-          <NavLink to="/admin/users" style={navLinkStyle}>
-            👥 Клієнти
+
+          <NavLink
+            to="/admin/users"
+            className={({ isActive }) =>
+              `admin-nav-link ${isActive ? "active" : ""}`
+            }
+          >
+            <Users size={18} />
+            <span>Клієнти</span>
+          </NavLink>
+
+          <NavLink
+            to="/admin/messages"
+            className={({ isActive }) =>
+              `admin-nav-link ${isActive ? "active" : ""}`
+            }
+          >
+            <MessageSquare size={18} />
+            <span>Повідомлення</span>
+            {newCount > 0 && (
+              <span className="admin-nav-badge">{newCount}</span>
+            )}
           </NavLink>
         </nav>
 
-        <button
-          onClick={handleLogout}
-          style={{
-            padding: "0.75rem",
-            backgroundColor: "transparent",
-            color: "#e2ae79",
-            border: "1px solid #e2ae79",
-            cursor: "pointer",
-            fontWeight: "bold",
-            borderRadius: "4px",
-          }}
-        >
-          Вийти з панелі
-        </button>
+        <div className="admin-sidebar-footer">
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="admin-btn-logout"
+          >
+            <LogOut size={16} />
+            <span>Вийти з панелі</span>
+          </button>
+        </div>
       </aside>
 
       {/* Основна частина */}
-      <div style={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
-        {/* Використовуємо наш новий ізольований компонент Header */}
+      <div className="admin-main-wrap">
         <AdminHeader />
 
-        {/* Контент сторінок */}
-        <main style={{ padding: "2rem", overflowY: "auto", flexGrow: 1 }}>
+        <main className="admin-content">
           <Outlet />
         </main>
 
-        {/* Використовуємо наш новий ізольований компонент Footer */}
         <AdminFooter />
       </div>
     </div>

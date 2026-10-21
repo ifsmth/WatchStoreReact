@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { ShieldCheck, LogIn } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext.jsx";
 
 export default function AdminLoginPage() {
@@ -24,73 +25,22 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
-        backgroundColor: "#253432",
-      }}
-    >
-      <div
-        style={{
-          backgroundColor: "#fffefa",
-          padding: "3rem",
-          borderRadius: "8px",
-          width: "100%",
-          maxWidth: "400px",
-          boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
-        }}
-      >
-        <h1
-          style={{
-            textAlign: "center",
-            color: "#1d2224",
-            marginBottom: "0.5rem",
-            fontFamily: "'Playfair Display', serif",
-          }}
-        >
-          Вхід в Адмінку
-        </h1>
-        <p
-          style={{
-            textAlign: "center",
-            color: "#686861",
-            marginBottom: "2rem",
-            fontSize: "0.9rem",
-          }}
-        >
-          Тільки для персоналу магазину
+    <div className="admin-login-wrap">
+      <div className="admin-login-card">
+        <div className="admin-login-icon-box">
+          <ShieldCheck size={32} />
+        </div>
+
+        <h1 className="admin-login-title">Вхід в Адмінку</h1>
+        <p className="admin-login-sub">
+          Авторизація персоналу магазину ChronoClassic
         </p>
 
         <form onSubmit={handleSubmit} noValidate>
-          {error && (
-            <p
-              style={{
-                color: "#d32f2f",
-                backgroundColor: "#fff9f9",
-                padding: "0.8rem",
-                borderLeft: "4px solid #d32f2f",
-                marginBottom: "1.5rem",
-                fontSize: "0.85rem",
-                fontWeight: "bold",
-              }}
-            >
-              {error}
-            </p>
-          )}
+          {error && <div className="admin-alert-error">{error}</div>}
 
-          <div style={{ marginBottom: "1.2rem" }}>
-            <label
-              htmlFor="adminEmail"
-              style={{
-                display: "block",
-                marginBottom: "0.4rem",
-                fontWeight: "bold",
-                fontSize: "0.85rem",
-              }}
-            >
+          <div className="admin-form-group">
+            <label htmlFor="adminEmail" className="admin-form-label">
               Пошта адміністратора
             </label>
             <input
@@ -98,24 +48,14 @@ export default function AdminLoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "0.75rem",
-                border: "1px solid #a9aaa3",
-              }}
+              className="admin-input"
+              placeholder="admin@watch.com"
+              required
             />
           </div>
 
-          <div style={{ marginBottom: "2rem" }}>
-            <label
-              htmlFor="adminPassword"
-              style={{
-                display: "block",
-                marginBottom: "0.4rem",
-                fontWeight: "bold",
-                fontSize: "0.85rem",
-              }}
-            >
+          <div className="admin-form-group admin-form-group-mb">
+            <label htmlFor="adminPassword" className="admin-form-label">
               Пароль
             </label>
             <input
@@ -123,28 +63,18 @@ export default function AdminLoginPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "0.75rem",
-                border: "1px solid #a9aaa3",
-              }}
+              className="admin-input"
+              placeholder="••••••••"
+              required
             />
           </div>
 
           <button
             type="submit"
-            style={{
-              width: "100%",
-              padding: "0.8rem",
-              backgroundColor: "#bd5c38",
-              color: "white",
-              border: "none",
-              fontWeight: "bold",
-              fontSize: "1rem",
-              cursor: "pointer",
-            }}
+            className="admin-btn admin-btn-accent admin-btn-block"
           >
-            Увійти в панель
+            <LogIn size={18} />
+            <span>Увійти в панель</span>
           </button>
         </form>
       </div>

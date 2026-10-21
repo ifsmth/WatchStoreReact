@@ -161,10 +161,6 @@ export default function ProductDetailsPage({ items = [] }) {
                 border: "1px solid rgba(209, 250, 229, 0.5)",
               }}
             >
-              <div className="chrono-product-rating">
-                <Star size={14} fill="#f59e0b" color="#f59e0b" />
-                <span>{product.rating ?? "4.9"}</span>
-              </div>
               <img
                 src={images[selectedImgIndex] || images[0]}
                 alt={product.title || product.name}

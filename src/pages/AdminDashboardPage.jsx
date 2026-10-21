@@ -1,9 +1,10 @@
 import { Link } from "react-router";
+import { Watch, Package, TrendingUp, ArrowRight, Clock } from "lucide-react";
 import { products } from "../data/products.js";
 import { useOrders } from "../contexts/OrdersContext.jsx";
 
 export default function AdminDashboardPage() {
-  const { orders } = useOrders(); // Беремо актуальні замовлення з контексту
+  const { orders } = useOrders();
 
   // Рахуємо статистику
   const totalProducts = products.length;
@@ -15,155 +16,108 @@ export default function AdminDashboardPage() {
     0,
   );
 
-  // Останні 3 замовлення для міні-таблиці
-  const recentOrders = [...orders].reverse().slice(0, 3);
-
-  const cardStyle = {
-    background: "#fffefa",
-    padding: "1.5rem",
-    borderRadius: "8px",
-    border: "1px solid #dedbd3",
-    boxShadow: "0 4px 6px rgba(0,0,0,0.02)",
-    flex: "1 1 200px",
-  };
+  // Останні 4 замовлення для міні-таблиці
+  const recentOrders = [...orders].reverse().slice(0, 4);
 
   return (
     <section>
-      <h2 style={{ marginTop: 0, color: "#1d2224", marginBottom: "2rem" }}>
-        Огляд магазину
-      </h2>
+      <div className="admin-page-header">
+        <div>
+          <h2 className="admin-page-title">Огляд магазину</h2>
+          <p className="admin-page-subtitle">
+            Загальна аналітика та останні дії в системі
+          </p>
+        </div>
+      </div>
 
       {/* Картки статистики */}
-      <div
-        style={{
-          display: "flex",
-          gap: "1.5rem",
-          flexWrap: "wrap",
-          marginBottom: "3rem",
-        }}
-      >
-        <div style={cardStyle}>
-          <h3
-            style={{
-              color: "#686861",
-              fontSize: "0.9rem",
-              textTransform: "uppercase",
-              margin: "0 0 0.5rem 0",
-            }}
-          >
-            Всього товарів
-          </h3>
-          <p
-            style={{
-              fontSize: "2rem",
-              fontWeight: "bold",
-              margin: 0,
-              color: "#253432",
-            }}
-          >
-            {totalProducts}
-          </p>
+      <div className="admin-stats-grid">
+        <div className="admin-stat-card">
+          <div className="admin-stat-card-head">
+            <span className="admin-stat-label">Всього товарів</span>
+            <div className="admin-stat-icon">
+              <Watch size={20} />
+            </div>
+          </div>
+          <p className="admin-stat-val">{totalProducts}</p>
         </div>
-        <div style={cardStyle}>
-          <h3
-            style={{
-              color: "#686861",
-              fontSize: "0.9rem",
-              textTransform: "uppercase",
-              margin: "0 0 0.5rem 0",
-            }}
-          >
-            Нових замовлень
-          </h3>
-          <p
-            style={{
-              fontSize: "2rem",
-              fontWeight: "bold",
-              margin: 0,
-              color: "#bd5c38",
-            }}
-          >
-            {newOrders}
-          </p>
+
+        <div className="admin-stat-card">
+          <div className="admin-stat-card-head">
+            <span className="admin-stat-label">Нових замовлень</span>
+            <div className="admin-stat-icon gold">
+              <Package size={20} />
+            </div>
+          </div>
+          <p className="admin-stat-val gold">{newOrders}</p>
         </div>
-        <div style={cardStyle}>
-          <h3
-            style={{
-              color: "#686861",
-              fontSize: "0.9rem",
-              textTransform: "uppercase",
-              margin: "0 0 0.5rem 0",
-            }}
-          >
-            Загальний дохід (приблизно)
-          </h3>
-          <p
-            style={{
-              fontSize: "2rem",
-              fontWeight: "bold",
-              margin: 0,
-              color: "#27704a",
-            }}
-          >
+
+        <div className="admin-stat-card">
+          <div className="admin-stat-card-head">
+            <span className="admin-stat-label">Загальний дохід</span>
+            <div className="admin-stat-icon emerald">
+              <TrendingUp size={20} />
+            </div>
+          </div>
+          <p className="admin-stat-val emerald">
             {totalRevenue.toLocaleString("uk-UA")} ₴
           </p>
         </div>
       </div>
 
       {/* Міні-таблиця останніх замовлень */}
-      <div
-        style={{
-          background: "#fffefa",
-          border: "1px solid #dedbd3",
-          borderRadius: "8px",
-          padding: "1.5rem",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "1rem",
-          }}
-        >
-          <h3 style={{ margin: 0 }}>Останні замовлення</h3>
-          <Link
-            to="/admin/orders"
-            style={{
-              color: "#bd5c38",
-              fontWeight: "bold",
-              textDecoration: "none",
-              fontSize: "0.9rem",
-            }}
-          >
-            Всі замовлення →
+      <div className="admin-card">
+        <div className="admin-card-head">
+          <h3 className="admin-card-title">
+            <Clock size={18} />
+            Останні замовлення
+          </h3>
+          <Link to="/admin/orders" className="admin-card-link">
+            Всі замовлення <ArrowRight size={16} />
           </Link>
         </div>
 
         {recentOrders.length > 0 ? (
-          <table className="requests-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Клієнт</th>
-                <th>Сума</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentOrders.map((order) => (
-                <tr key={order.id}>
-                  <td>#{order.id.toString().slice(-4)}</td>
-                  <td>{order.customer?.name || "Невідомий"}</td>
-                  <td style={{ fontWeight: "bold" }}>
-                    {(order.totalPrice || 0).toLocaleString("uk-UA")} ₴
-                  </td>
+          <div className="admin-table-container">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th className="admin-th-id">ID</th>
+                  <th>Клієнт</th>
+                  <th>Статус</th>
+                  <th>Сума</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {recentOrders.map((order) => {
+                  const isNew =
+                    order.status === "Нове" || order.status === "new";
+                  return (
+                    <tr key={order.id}>
+                      <td className="admin-cell-id">
+                        #{String(order.id).slice(-4)}
+                      </td>
+                      <td className="admin-cell-name">
+                        {order.customer?.name || "Невідомий"}
+                      </td>
+                      <td>
+                        <span
+                          className={`admin-badge ${isNew ? "admin-badge-warning" : "admin-badge-success"}`}
+                        >
+                          {order.status || "В обробці"}
+                        </span>
+                      </td>
+                      <td className="admin-cell-price">
+                        {(order.totalPrice || 0).toLocaleString("uk-UA")} ₴
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         ) : (
-          <p style={{ color: "#686861" }}>Замовлень поки немає.</p>
+          <p className="admin-empty-text">Замовлень поки немає.</p>
         )}
       </div>
     </section>

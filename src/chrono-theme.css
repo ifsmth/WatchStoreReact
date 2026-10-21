@@ -1679,7 +1679,7 @@ body {
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
-  color: rgba(209, 250, 229, 0.8);
+  color: rgba(95, 151, 123, 0.8);
   margin-bottom: 0.25rem;
 }
 
@@ -2195,4 +2195,94 @@ body {
   flex-wrap: wrap;
   gap: 0.75rem;
   margin-top: 1rem;
+}
+
+/* ==========================================================================
+   Customer Order Details Page Styles
+   ========================================================================== */
+.chrono-order-details-view {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.chrono-back-link-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.chrono-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: var(--chrono-emerald-950);
+  font-weight: 700;
+  font-size: 0.875rem;
+  transition: color 0.2s ease;
+}
+
+.chrono-back-link:hover {
+  color: var(--chrono-amber-600);
+}
+
+.chrono-order-page-head {
+  margin-bottom: 1.5rem;
+}
+
+.chrono-order-page-title {
+  font-family: var(--chrono-font-serif);
+  font-size: 2rem;
+  color: var(--chrono-emerald-950);
+  margin: 0 0 0.5rem 0;
+}
+
+.chrono-order-page-subtitle {
+  color: rgba(6, 78, 59, 0.6);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.chrono-order-comment-box {
+  margin-top: 1rem;
+  padding: 0.875rem;
+  background-color: rgba(236, 253, 245, 0.4);
+  border-radius: var(--chrono-radius-md);
+  border: 1px solid rgba(209, 250, 229, 0.6);
+  font-size: 0.75rem;
+  color: rgba(6, 78, 59, 0.8);
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chrono-order-total-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 2px solid var(--chrono-emerald-100);
+}
+
+.chrono-order-total-lbl {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--chrono-emerald-950);
+}
+
+.chrono-order-total-val {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--chrono-amber-600);
+}
+
+.chrono-font-bold {
+  font-weight: 700;
+  color: var(--chrono-emerald-950);
+}
+
+.chrono-price-gold {
+  font-weight: 800;
+  color: var(--chrono-amber-600);
 }

@@ -34,10 +34,6 @@ export default function ProductCard({ item, onAddToCartFeedback }) {
     <article className="chrono-product-card">
       {/* Product Image Area */}
       <div className="chrono-product-photo-box" onClick={handleCardClick}>
-        <div className="chrono-product-rating">
-          <Star size={14} fill="#f59e0b" color="#f59e0b" />
-          <span>{product.rating ?? "4.9"}</span>
-        </div>
         <img
           src={imageSrc}
           alt={product.title || product.name}

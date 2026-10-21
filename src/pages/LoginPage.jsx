@@ -22,7 +22,7 @@ export default function LoginPage() {
     setError("");
 
     if (!emailOrPhone.trim()) {
-      setError("Введіть Email або номер телефону.");
+      setError("Введіть Email.");
       return;
     }
     if (password.length < 6) {
@@ -67,18 +67,18 @@ export default function LoginPage() {
 
         <h1 className="chrono-auth-title">Вхід до кабінету</h1>
         <p className="chrono-auth-subtitle">
-          Введіть свої дані для доступу до персональних знижок та замовлень
+          Введіть свої дані для доступу до персонального кабінету
         </p>
 
         {error && <div className="chrono-auth-error">{error}</div>}
 
         <form onSubmit={handleSubmit} noValidate>
           <div className="chrono-form-group">
-            <label className="chrono-label">Email або Телефон *</label>
+            <label className="chrono-label">Email*</label>
             <input
               type="text"
               required
-              placeholder="example@mail.com або +380..."
+              placeholder="example@mail.com"
               value={emailOrPhone}
               onChange={(e) => setEmailOrPhone(e.target.value)}
               className="chrono-input-light"

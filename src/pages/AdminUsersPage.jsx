@@ -1,5 +1,3 @@
-import PageHeading from "../components/ui/PageHeading.jsx";
-
 // Фейкові дані клієнтів для демонстрації
 const mockUsers = [
   {
@@ -35,17 +33,20 @@ const mockUsers = [
 export default function AdminUsersPage() {
   return (
     <section>
-      <PageHeading title="Зареєстровані клієнти" />
-      <p style={{ color: "#686861", marginBottom: "2rem" }}>
-        Перегляд списку користувачів, які зареєстрували акаунт у вашому
-        магазині.
-      </p>
+      <div className="admin-page-header">
+        <div>
+          <h2 className="admin-page-title">Зареєстровані клієнти</h2>
+          <p className="admin-page-subtitle">
+            Перегляд списку покупців, які створили акаунт у ChronoClassic
+          </p>
+        </div>
+      </div>
 
-      <div className="table-scroll">
-        <table className="requests-table">
+      <div className="admin-table-container">
+        <table className="admin-table">
           <thead>
             <tr>
-              <th>ID</th>
+              <th className="admin-th-id">ID</th>
               <th>Ім'я клієнта</th>
               <th>Електронна пошта</th>
               <th>Телефон</th>
@@ -55,13 +56,11 @@ export default function AdminUsersPage() {
           <tbody>
             {mockUsers.map((user) => (
               <tr key={user.id}>
-                <td style={{ color: "#686861", fontWeight: "bold" }}>
-                  #{user.id}
-                </td>
-                <td style={{ fontWeight: "600" }}>{user.name}</td>
+                <td className="admin-cell-id">#{user.id}</td>
+                <td className="admin-cell-name">{user.name}</td>
                 <td>{user.email}</td>
                 <td>{user.phone}</td>
-                <td style={{ color: "#686861" }}>{user.registeredAt}</td>
+                <td className="admin-cell-muted">{user.registeredAt}</td>
               </tr>
             ))}
           </tbody>

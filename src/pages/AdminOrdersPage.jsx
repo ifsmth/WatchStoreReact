@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import AppButton from "../components/ui/AppButton.jsx";
+import { Search, RefreshCw, Eye, Trash2 } from "lucide-react";
 import { useOrders } from "../contexts/OrdersContext.jsx";
 
 export default function AdminOrdersPage() {
@@ -13,7 +13,7 @@ export default function AdminOrdersPage() {
     }
   };
 
-  // Проста фільтрація замовлень (за ім'ям клієнта або ID)
+  // Фільтрація замовлень (за ім'ям клієнта або ID)
   const filteredOrders = orders.filter((order) => {
     const customerName = order.customer?.name || order.customerName || "";
     return (
@@ -24,45 +24,46 @@ export default function AdminOrdersPage() {
 
   return (
     <section>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "2rem",
-        }}
-      >
-        <h2 style={{ margin: 0, color: "#1d2224" }}>Управління замовленнями</h2>
+      <div className="admin-page-header">
+        <div>
+          <h2 className="admin-page-title">Управління замовленнями</h2>
+          <p className="admin-page-subtitle">
+            Перегляд та зміна статусів замовлень, оформлених клієнтами
+          </p>
+        </div>
 
-        <AppButton onClick={() => reload && reload()} variant="secondary">
-          Оновити дані
-        </AppButton>
+        <button
+          type="button"
+          onClick={() => reload && reload()}
+          className="admin-btn admin-btn-secondary"
+        >
+          <RefreshCw size={15} />
+          <span>Оновити дані</span>
+        </button>
       </div>
 
-      <div style={{ marginBottom: "1.5rem" }}>
-        <input
-          type="text"
-          placeholder="Пошук за клієнтом або ID..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{
-            width: "100%",
-            maxWidth: "400px",
-            padding: "0.75rem",
-            border: "1px solid #a9aaa3",
-          }}
-        />
+      <div className="admin-filter-bar">
+        <div className="admin-search-wrap">
+          <Search size={16} className="admin-search-icon" />
+          <input
+            type="text"
+            placeholder="Пошук за клієнтом або ID..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="admin-input admin-search-input"
+          />
+        </div>
       </div>
 
-      <div className="table-scroll">
-        <table className="requests-table">
+      <div className="admin-table-container">
+        <table className="admin-table">
           <thead>
             <tr>
-              <th>ID</th>
+              <th className="admin-th-id">ID</th>
               <th>Клієнт</th>
               <th>Статус</th>
               <th>Сума</th>
-              <th>Дії</th>
+              <th className="admin-th-actions-lg">Дії</th>
             </tr>
           </thead>
           <tbody>
@@ -70,55 +71,44 @@ export default function AdminOrdersPage() {
               filteredOrders.map((order) => {
                 const customerName =
                   order.customer?.name || order.customerName || "Невідомий";
+                const isNew = order.status === "Нове" || order.status === "new";
 
                 return (
                   <tr key={order.id}>
-                    <td style={{ color: "#686861", fontWeight: "bold" }}>
+                    <td className="admin-cell-id">
                       #{String(order.id).slice(-4)}
                     </td>
-                    <td style={{ fontWeight: "600" }}>{customerName}</td>
+                    <td className="admin-cell-name">{customerName}</td>
                     <td>
                       <span
-                        style={{
-                          padding: "0.2rem 0.5rem",
-                          borderRadius: "4px",
-                          fontSize: "0.8rem",
-                          fontWeight: "bold",
-                          backgroundColor:
-                            order.status === "Нове" || order.status === "new"
-                              ? "#fff9f9"
-                              : "#f1f8f4",
-                          color:
-                            order.status === "Нове" || order.status === "new"
-                              ? "#d32f2f"
-                              : "#27704a",
-                        }}
+                        className={`admin-badge ${
+                          isNew ? "admin-badge-warning" : "admin-badge-success"
+                        }`}
                       >
                         {order.status || "В обробці"}
                       </span>
                     </td>
-                    <td style={{ fontWeight: "bold", color: "#a74f30" }}>
+                    <td className="admin-cell-price">
                       {(order.totalPrice || 0).toLocaleString("uk-UA")} ₴
                     </td>
                     <td>
-                      <div className="table-actions">
+                      <div className="admin-table-actions">
                         <Link
                           to={`/admin/orders/${order.id}`}
-                          className="action-btn action-btn-view"
+                          className="admin-btn admin-btn-secondary admin-btn-sm"
+                          title="Деталі"
                         >
-                          Деталі
-                        </Link>
-                        <Link
-                          to={`/admin/orders/${order.id}/edit`}
-                          className="action-btn action-btn-edit"
-                        >
-                          Редагувати
+                          <Eye size={13} />
+                          <span>Деталі</span>
                         </Link>
                         <button
+                          type="button"
                           onClick={() => handleDelete(order.id)}
-                          className="action-btn action-btn-delete"
+                          className="admin-btn admin-btn-danger admin-btn-sm"
+                          title="Видалити"
                         >
-                          Видалити
+                          <Trash2 size={13} />
+                          <span>Видалити</span>
                         </button>
                       </div>
                     </td>
@@ -127,15 +117,8 @@ export default function AdminOrdersPage() {
               })
             ) : (
               <tr>
-                <td
-                  colSpan="5"
-                  style={{
-                    textAlign: "center",
-                    color: "#686861",
-                    padding: "2rem",
-                  }}
-                >
-                  Замовлень не знайдено
+                <td colSpan="5" className="admin-empty-cell">
+                  Замовлень за вказаними критеріями не знайдено.
                 </td>
               </tr>
             )}
