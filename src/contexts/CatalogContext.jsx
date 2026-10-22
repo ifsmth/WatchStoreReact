@@ -6,7 +6,10 @@ import {
   useMemo,
   useState,
 } from "react";
-import { brands as mockBrands, products as mockProducts } from "../data/products.js";
+import {
+  brands as mockBrands,
+  products as mockProducts,
+} from "../data/products.js";
 import { catalogService } from "../services/catalogService.js";
 import { isMockData } from "../services/dataSource.js";
 import { errorMessage } from "../services/ServiceError.js";
