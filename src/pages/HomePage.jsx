@@ -9,10 +9,11 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import ProductCard from "../components/products/ProductCard.jsx";
-import { products, brandsList } from "../data/products.js";
+import { useCatalog } from "../contexts/CatalogContext.jsx";
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const { products, brandsList, status } = useCatalog();
   const [notification, setNotification] = useState(null);
 
   const showNotification = (msg) => {
@@ -106,15 +107,21 @@ export default function HomePage() {
           <div className="chrono-divider" />
         </div>
 
-        <div className="chrono-products-grid home-grid">
-          {popularProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              item={product}
-              onAddToCartFeedback={showNotification}
-            />
-          ))}
-        </div>
+        {status === "loading" ? (
+          <p style={{ textAlign: "center", color: "rgba(6, 78, 59, 0.7)" }}>
+            Завантаження каталогу…
+          </p>
+        ) : (
+          <div className="chrono-products-grid home-grid">
+            {popularProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                item={product}
+                onAddToCartFeedback={showNotification}
+              />
+            ))}
+          </div>
+        )}
 
         <div style={{ textAlign: "center", marginTop: "3rem" }}>
           <Link to="/products" className="chrono-btn-primary">

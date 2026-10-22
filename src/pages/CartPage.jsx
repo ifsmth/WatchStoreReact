@@ -3,26 +3,50 @@ import { Link, useNavigate } from "react-router";
 import { ShoppingCart, Trash2, CheckCircle2 } from "lucide-react";
 import { useCart } from "../contexts/CartContext.jsx";
 import { useAuth } from "../contexts/AuthContext.jsx";
+import { useOrders } from "../contexts/OrdersContext.jsx";
 
 export default function CartPage() {
   const { cartItems, updateQuantity, removeFromCart, cartTotal, clearCart } =
     useCart();
   const { user } = useAuth();
+  const { createOrder } = useOrders();
   const navigate = useNavigate();
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [notification, setNotification] = useState(null);
+  const [checkoutError, setCheckoutError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const showNotification = (msg) => {
     setNotification(msg);
     setTimeout(() => setNotification(null), 3000);
   };
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (!user) {
       navigate("/login");
-    } else {
+      return;
+    }
+
+    setCheckoutError("");
+    setSubmitting(true);
+    const result = await createOrder({
+      customer_name: user.name,
+      customerName: user.name,
+      phone: user.phone_number || user.phone || "",
+      email: user.email,
+      comment: "",
+      items: cartItems.map((item) => ({
+        product_id: item.product.id,
+        quantity: item.quantity,
+      })),
+    });
+    setSubmitting(false);
+
+    if (result.ok) {
       setOrderSuccess(true);
       clearCart();
+    } else {
+      setCheckoutError(result.message || "Не вдалося оформити замовлення.");
     }
   };
 
@@ -338,13 +362,27 @@ export default function CartPage() {
             </span>
           </div>
 
+          {checkoutError && (
+            <p
+              role="alert"
+              style={{
+                color: "#b91c1c",
+                marginTop: "1rem",
+                fontSize: "0.875rem",
+              }}
+            >
+              {checkoutError}
+            </p>
+          )}
+
           <button
             type="button"
             onClick={handleCheckout}
             className="chrono-btn-primary"
             style={{ width: "100%", marginTop: "1.5rem", padding: "1rem" }}
+            disabled={submitting}
           >
-            Оформити замовлення
+            {submitting ? "Оформлення..." : "Оформити замовлення"}
           </button>
         </div>
       )}

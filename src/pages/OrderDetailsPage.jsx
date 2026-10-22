@@ -16,7 +16,7 @@ export default function OrderDetailsPage() {
   const { orderId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { orders, updateOrder, deleteOrder } = useOrders();
+  const { orders, updateOrderStatus, deleteOrder } = useOrders();
 
   const isAdmin = location.pathname.startsWith("/admin");
 
@@ -37,7 +37,7 @@ export default function OrderDetailsPage() {
   const handleUpdateStatus = async () => {
     setError("");
     setSuccess(false);
-    const result = await updateOrder(order.id, { ...order, status });
+    const result = await updateOrderStatus(order.id, status);
     if (result.ok) {
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);

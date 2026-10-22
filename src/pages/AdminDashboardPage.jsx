@@ -1,10 +1,11 @@
 import { Link } from "react-router";
 import { Watch, Package, TrendingUp, ArrowRight, Clock } from "lucide-react";
-import { products } from "../data/products.js";
 import { useOrders } from "../contexts/OrdersContext.jsx";
+import { useCatalog } from "../contexts/CatalogContext.jsx";
 
 export default function AdminDashboardPage() {
   const { orders } = useOrders();
+  const { products } = useCatalog();
 
   // Рахуємо статистику
   const totalProducts = products.length;

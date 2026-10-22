@@ -21,7 +21,9 @@ export default function AccountEditPage() {
   const [error, setError] = useState("");
   const [notification, setNotification] = useState(null);
 
-  const handleSubmit = (e) => {
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -30,7 +32,9 @@ export default function AccountEditPage() {
       return;
     }
 
-    const success = updateUser(name.trim(), phone.trim());
+    setSubmitting(true);
+    const success = await updateUser(name.trim(), phone.trim());
+    setSubmitting(false);
     if (success) {
       setNotification("Дані успішно оновлено!");
       setTimeout(() => navigate("/account"), 1000);
@@ -194,8 +198,9 @@ export default function AccountEditPage() {
                 type="submit"
                 className="chrono-btn-primary"
                 style={{ flex: 1, padding: "0.875rem" }}
+                disabled={submitting}
               >
-                <Save size={16} /> Зберегти зміни
+                <Save size={16} /> {submitting ? "Збереження..." : "Зберегти зміни"}
               </button>
               <Link
                 to="/account"

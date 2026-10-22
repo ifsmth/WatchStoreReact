@@ -2,7 +2,11 @@ import { Navigate } from "react-router";
 import { useAuth } from "../../contexts/AuthContext.jsx";
 
 export default function ProtectedRoute({ children }) {
-  const { user } = useAuth();
+  const { user, ready } = useAuth();
+
+  if (!ready) {
+    return null;
+  }
 
   // Якщо користувача немає (не залогінений), перекидаємо на сторінку входу
   if (!user) {

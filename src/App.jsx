@@ -22,6 +22,7 @@ import { CartProvider } from "./contexts/CartContext.jsx";
 import CartPage from "./pages/CartPage.jsx";
 
 import { AuthProvider } from "./contexts/AuthContext.jsx";
+import { CatalogProvider } from "./contexts/CatalogContext.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 
@@ -44,18 +45,15 @@ import AdminUsersPage from "./pages/AdminUsersPage.jsx";
 import AdminOrdersPage from "./pages/AdminOrdersPage.jsx";
 import AdminMessagesPage from "./pages/AdminMessagesPage.jsx";
 
-// Дані
-import { products } from "./data/products.js";
-import { orders } from "./data/orders.js";
-
 export default function App() {
   return (
     <AuthProvider>
-      <ProductSelectionProvider>
-        <OrdersProvider>
-          <CartProvider>
-            <MessagesProvider>
-              <Routes>
+      <CatalogProvider>
+        <ProductSelectionProvider>
+          <OrdersProvider>
+            <CartProvider>
+              <MessagesProvider>
+                <Routes>
                 {/* Головна оболонка застосунку, яка має <Outlet /> */}
                 <Route path="/" element={<AppLayout />}>
                   {/* Головна сторінка відкривається за замовчуванням (index) */}
@@ -93,14 +91,8 @@ export default function App() {
 
                   {/* Маршрути каталогу */}
                   <Route path="products">
-                    <Route
-                      index
-                      element={<CatalogContainer items={products} />}
-                    />
-                    <Route
-                      path=":productId"
-                      element={<ProductDetailsPage items={products} />}
-                    />
+                    <Route index element={<CatalogContainer />} />
+                    <Route path=":productId" element={<ProductDetailsPage />} />
                   </Route>
 
                   <Route path="cart" element={<CartPage />} />
@@ -110,16 +102,8 @@ export default function App() {
 
                   {/* Вкладені маршрути замовлень із власною оболонкою */}
                   <Route path="orders" element={<OrdersLayout />}>
-                    <Route
-                      path=":orderId"
-                      element={<OrderDetailsPage items={products} />}
-                    />
-                    <Route
-                      path=":orderId/edit"
-                      element={
-                        <OrderEditPage orders={orders} items={products} />
-                      }
-                    />
+                    <Route path=":orderId" element={<OrderDetailsPage />} />
+                    <Route path=":orderId/edit" element={<OrderEditPage />} />
                   </Route>
 
                   {/* Обробка невідомих адрес */}
@@ -155,10 +139,11 @@ export default function App() {
                   <Route path="*" element={<NotFoundPage />} />
                 </Route>
               </Routes>
-            </MessagesProvider>
-          </CartProvider>
-        </OrdersProvider>
-      </ProductSelectionProvider>
+              </MessagesProvider>
+            </CartProvider>
+          </OrdersProvider>
+        </ProductSelectionProvider>
+      </CatalogProvider>
     </AuthProvider>
   );
 }

@@ -17,7 +17,9 @@ export default function LoginPage() {
     setTimeout(() => setNotification(null), 3000);
   };
 
-  const handleSubmit = (e) => {
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -25,12 +27,14 @@ export default function LoginPage() {
       setError("Введіть Email.");
       return;
     }
-    if (password.length < 6) {
-      setError("Пароль має містити мінімум 6 символів.");
+    if (password.length < 8) {
+      setError("Пароль має містити мінімум 8 символів.");
       return;
     }
 
-    const result = login(emailOrPhone.trim(), password, "user");
+    setSubmitting(true);
+    const result = await login(emailOrPhone.trim(), password, "user");
+    setSubmitting(false);
     if (result.success) {
       showNotification("Ви успішно увійшли!");
       setTimeout(() => navigate("/"), 800);
@@ -101,8 +105,9 @@ export default function LoginPage() {
             type="submit"
             className="chrono-btn-auth-dark"
             style={{ marginTop: "1rem" }}
+            disabled={submitting}
           >
-            Увійти
+            {submitting ? "Вхід..." : "Увійти"}
           </button>
         </form>
 

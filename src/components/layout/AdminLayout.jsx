@@ -14,9 +14,13 @@ import AdminHeader from "./AdminHeader.jsx";
 import AdminFooter from "./AdminFooter.jsx";
 
 export default function AdminLayout() {
-  const { user, logout } = useAuth();
+  const { user, ready, logout } = useAuth();
   const { newCount } = useMessages();
   const navigate = useNavigate();
+
+  if (!ready) {
+    return null;
+  }
 
   // Захист маршруту: якщо не адмін — викидаємо
   if (!user || user.role !== "admin") {

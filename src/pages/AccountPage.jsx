@@ -25,12 +25,13 @@ export default function AccountPage() {
     return null;
   }
 
-  // Filter orders related to this user
-  const myOrders = (orders || []).filter(
-    (order) =>
+  const myOrders = (orders || []).filter((order) => {
+    if (order.user_id != null) return String(order.user_id) === String(user.id);
+    return (
       order.customer?.email === user.email ||
-      order.customer?.name === user.name,
-  );
+      order.customer?.name === user.name
+    );
+  });
 
   const getInitials = (name = "") => {
     const parts = name.trim().split(" ");

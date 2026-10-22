@@ -1,0 +1,13 @@
+<?php
+function user_by_id($pdo,$id){
+    $s=$pdo->prepare('SELECT * FROM users WHERE id=?');
+    $s->execute(array($id));$u=$s->fetch();
+    if(!$u) error_response('Користувача не знайдено.',404);
+    return $u;
+}
+function register_user($pdo){$i=json_body();require_fields($i,array('name','email','phone_number','password'));require_valid_email($i['email']);if(strlen($i['password'])<8)error_response('Пароль має містити щонайменше 8 символів.',422);$s=$pdo->prepare('INSERT INTO users(name,email,phone_number,password_hash) VALUES(?,?,?,?)');$s->execute(array(trim($i['name']),strtolower(trim($i['email'])),trim($i['phone_number']),password_hash($i['password'],PASSWORD_DEFAULT)));$u=user_by_id($pdo,(int)$pdo->lastInsertId());json_response(array('token'=>create_token($u['id'],'user'),'user'=>public_account($u,'user')),201);}
+function login_user($pdo){$i=json_body();require_fields($i,array('login','password'));$s=$pdo->prepare('SELECT * FROM users WHERE email=? OR phone_number=?');$s->execute(array($i['login'],$i['login']));$u=$s->fetch();if(!$u||!password_verify($i['password'],$u['password_hash']))error_response('Невірний логін або пароль.',401);json_response(array('token'=>create_token($u['id'],'user'),'user'=>public_account($u,'user')));}
+function login_admin($pdo){$i=json_body();require_fields($i,array('email','password'));$s=$pdo->prepare('SELECT * FROM admins WHERE email=?');$s->execute(array(strtolower(trim($i['email']))));$a=$s->fetch();if(!$a||!password_verify($i['password'],$a['password_hash']))error_response('Невірний логін або пароль.',401);json_response(array('token'=>create_token($a['id'],'admin'),'admin'=>public_account($a,'admin')));}
+function current_account($pdo){$a=authenticated_account($pdo);json_response(public_account($a['data'],$a['role']));}
+function update_profile($pdo){$u=require_user($pdo);$i=json_body();$sets=array();$values=array();foreach(array('name','phone_number') as $f)if(array_key_exists($f,$i)){$sets[]=$f.'=?';$values[]=trim($i[$f]);}if(!$sets)error_response('Немає даних для оновлення.',422);$values[]=$u['id'];$pdo->prepare('UPDATE users SET '.implode(',',$sets).' WHERE id=?')->execute($values);json_response(public_account(user_by_id($pdo,$u['id']),'user'));}
+function change_password($pdo){$u=require_user($pdo);$i=json_body();require_fields($i,array('old_password','new_password'));if(!password_verify($i['old_password'],$u['password_hash']))error_response('Невірний старий пароль.',401);if(strlen($i['new_password'])<8)error_response('Пароль має містити щонайменше 8 символів.',422);$pdo->prepare('UPDATE users SET password_hash=? WHERE id=?')->execute(array(password_hash($i['new_password'],PASSWORD_DEFAULT),$u['id']));json_response(array('message'=>'Пароль успішно змінено.'));}

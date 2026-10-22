@@ -7,7 +7,7 @@ import NotFoundPage from "./NotFoundPage.jsx";
 export default function OrderEditPage() {
   const { orderId } = useParams();
   const navigate = useNavigate();
-  const { orders, updateOrder } = useOrders();
+  const { orders, updateOrderContacts } = useOrders();
   const [error, setError] = useState("");
 
   const order = orders.find((entry) => String(entry.id) === String(orderId));
@@ -47,20 +47,13 @@ export default function OrderEditPage() {
       return;
     }
 
-    const updatedOrder = {
-      ...order,
-      customer: {
-        ...(order.customer || {}),
-        name: formData.customerName,
-        phone: formData.phone,
-        email: formData.email,
-      },
+    const result = await updateOrderContacts(order.id, {
+      customer_name: formData.customerName,
       customerName: formData.customerName,
       phone: formData.phone,
+      email: formData.email,
       comment: formData.comment,
-    };
-
-    const result = await updateOrder(order.id, updatedOrder);
+    });
 
     if (result.ok) {
       navigate(`/admin/orders/${order.id}`);

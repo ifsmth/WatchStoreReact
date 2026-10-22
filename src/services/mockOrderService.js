@@ -85,27 +85,62 @@ export const mockOrderService = {
     return findRecord(read(), id);
   },
 
-  async create(input) {
-    const value = toOrderInput(input);
+    async create(input) {
     await before("create");
     const records = read();
+    if (Array.isArray(input.items) && input.items.length > 0) {
+      const record = {
+        id: `ord-${crypto.randomUUID()}`,
+        customerName: input.customerName || input.customer_name,
+        phone: input.phone,
+        email: input.email,
+        comment: input.comment || "",
+        status: "Нове",
+        items: input.items,
+        totalPrice: input.items.reduce(
+          (sum, item) => sum + Number(item.quantity || 1),
+          0,
+        ),
+      };
+      write([...records, record]);
+      return { ...record };
+    }
+    const value = toOrderInput(input);
     const record = { ...value, id: `ord-${crypto.randomUUID()}` };
     write([...records, record]);
     return { ...record };
   },
 
-  async update(id, input) {
-    const value = toOrderInput(input);
-    await before("update");
+    async update(id, input) {
     const records = read();
-    findRecord(records, id); // Перевіряємо чи існує
-    const record = { ...value, id: String(id) };
+    const current = findRecord(records, id);
+    const hasLegacyFields =
+      input.productId !== undefined || input.quantity !== undefined;
+    const value = hasLegacyFields
+      ? toOrderInput(input)
+      : {
+          ...current,
+          customerName: input.customerName ?? current.customerName,
+          phone: input.phone ?? current.phone,
+          comment: input.comment ?? current.comment,
+          status: input.status ?? current.status,
+        };
+    await before("update");
+    const record = { ...current, ...value, id: String(id) };
     write(
       records.map((entry) =>
         String(entry.id) === String(id) ? record : entry,
       ),
     );
     return { ...record };
+  },
+
+  async updateStatus(id, status) {
+    return this.update(id, { status });
+  },
+
+  async updateContacts(id, input) {
+    return this.update(id, input);
   },
 
   async delete(id) {

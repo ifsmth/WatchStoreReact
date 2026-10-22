@@ -52,8 +52,9 @@ CREATE TABLE admins (
 -- 6. Замовлення (Кошик перетворюється на це після чекауту)
 CREATE TABLE orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT, -- NULL дозволяє робити покупки без реєстрації
+    user_id INT,
     total_price DECIMAL(10, 2) NOT NULL,
+    comment TEXT,
     status ENUM('Нове', 'В обробці', 'Відправлено', 'Виконано', 'Скасовано') DEFAULT 'Нове',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
@@ -68,6 +69,16 @@ CREATE TABLE order_items (
     price_at_purchase DECIMAL(10, 2) NOT NULL, -- Фіксуємо ціну на момент покупки (бо в майбутньому ціна товару може змінитись)
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT
+);
+
+-- 8. Заявки (About Us Page)
+CREATE TABLE applications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    contact_information VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    status ENUM('Нове', 'Опрацьовано') DEFAULT 'Нове',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 ---
@@ -122,4 +133,72 @@ PATCH,/api/admin/orders/:id/status,"Змінити статус (напр., ""В
 Race coditions для замовлень
 
 ---
+
+
+---
+
+ЗАУВАЖЕННЯ (FIXED)
+
+## 9. Зауваження до структури БД
+
+> [!IMPORTANT]
+> Порівнюючи фронтенд-функціональність із запропонованою схемою БД, є кілька речей, які потрібно доопрацювати:
+
+### 9.1 Таблиця `applications` — бракує полів
+
+Поточна схема:
+```sql
+CREATE TABLE applications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    contact_information VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL  -- тут помилка: крапка з комою замість коми
+);
+```
+
+**Потрібно додати:**
+```sql
+CREATE TABLE applications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    contact_information VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    status ENUM('Нове', 'Опрацьовано') DEFAULT 'Нове',   -- ← ДОДАТИ
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP        -- ← ДОДАТИ
+);
+```
+
+Без поля `status` адмінка не зможе відрізнити нові заявки від опрацьованих. Без `created_at` — не буде дати надходження.
+
+---
+
+### 9.2 Таблиця `orders` — бракує контактних даних
+
+Поточна схема не зберігає ім'я, телефон, email та коментар клієнта в самому замовленні. Однак `user_id` може бути `NULL` (покупка без реєстрації), а навіть для зареєстрованих клієнтів потрібно фіксувати контактну інформацію на момент замовлення (вона може змінитися пізніше).
+
+**Потрібно додати:**
+```sql
+CREATE TABLE orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    customer_name VARCHAR(255) NOT NULL,      -- ← ДОДАТИ
+    phone VARCHAR(50),                         -- ← ДОДАТИ
+    email VARCHAR(255),                        -- ← ДОДАТИ
+    comment TEXT,                              -- ← ДОДАТИ
+    total_price DECIMAL(10, 2) NOT NULL,
+    status ENUM('Нове', 'В обробці', 'Відправлено', 'Виконано', 'Скасовано') DEFAULT 'Нове',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+```
+
+---
+
+### 9.3 Синтаксична помилка в SQL
+
+У таблиці `applications` є `;` замість `,` після поля `message`:
+```sql
+message TEXT NOT NULL;   -- ← Це крапка з комою — має бути кома або нічого (останнє поле)
+```
+
 

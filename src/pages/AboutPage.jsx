@@ -33,18 +33,22 @@ export default function AboutPage() {
     message: "",
   });
 
-  const handleContactSubmit = (e) => {
+  const handleContactSubmit = async (e) => {
     e.preventDefault();
     if (formData.name.trim() && formData.contact.trim()) {
-      addMessage({
-        name: formData.name,
-        contact: formData.contact,
-        message: formData.message,
-      });
+      try {
+        await addMessage({
+          name: formData.name,
+          contact: formData.contact,
+          message: formData.message,
+        });
+        setContactSubmitted(true);
+        setFormData({ name: "", contact: "", message: "" });
+        setTimeout(() => setContactSubmitted(false), 5000);
+      } catch {
+        setContactSubmitted(false);
+      }
     }
-    setContactSubmitted(true);
-    setFormData({ name: "", contact: "", message: "" });
-    setTimeout(() => setContactSubmitted(false), 5000);
   };
 
   const faqItems = [

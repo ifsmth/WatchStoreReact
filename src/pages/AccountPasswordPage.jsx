@@ -21,7 +21,7 @@ export default function AccountPasswordPage() {
   const [error, setError] = useState("");
   const [notification, setNotification] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -29,8 +29,8 @@ export default function AccountPasswordPage() {
       setError("Будь ласка, заповніть всі обов'язкові поля.");
       return;
     }
-    if (newPassword.length < 6) {
-      setError("Новий пароль має містити мінімум 6 символів.");
+    if (newPassword.length < 8) {
+      setError("Новий пароль має містити мінімум 8 символів.");
       return;
     }
     if (newPassword !== confirmPassword) {
@@ -38,7 +38,7 @@ export default function AccountPasswordPage() {
       return;
     }
 
-    const result = updatePassword(oldPassword, newPassword);
+    const result = await updatePassword(oldPassword, newPassword);
     if (result && (result.success || result === true)) {
       setNotification("Пароль успішно змінено!");
       setTimeout(() => navigate("/account"), 1000);
@@ -144,7 +144,7 @@ export default function AccountPasswordPage() {
               <input
                 type="password"
                 required
-                placeholder="Мінімум 6 символів"
+                placeholder="Мінімум 8 символів"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 className="chrono-input-light"

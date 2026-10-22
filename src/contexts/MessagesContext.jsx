@@ -1,4 +1,8 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { applicationService } from "../services/applicationService.js";
+import { isMockData } from "../services/dataSource.js";
+import { errorMessage } from "../services/ServiceError.js";
+import { useAuth } from "./AuthContext.jsx";
 
 const STORAGE_KEY = "chronoclassic_user_messages";
 
@@ -43,23 +47,28 @@ const INITIAL_MESSAGES = [
 
 const MessagesContext = createContext(null);
 
-export function MessagesProvider({ children }) {
-  const [messages, setMessages] = useState(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
-        }
-      }
-    } catch {
-      // Fallback
+function readStoredMessages() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
     }
-    return INITIAL_MESSAGES;
-  });
+  } catch {
+    // fallback
+  }
+  return INITIAL_MESSAGES;
+}
+
+export function MessagesProvider({ children }) {
+  const { user, ready } = useAuth();
+  const [messages, setMessages] = useState(() =>
+    isMockData ? readStoredMessages() : [],
+  );
+  const [error, setError] = useState("");
 
   useEffect(() => {
+    if (!isMockData) return;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
     } catch (err) {
@@ -67,34 +76,80 @@ export function MessagesProvider({ children }) {
     }
   }, [messages]);
 
-  const addMessage = ({ name, contact, message }) => {
-    const now = new Date();
-    const formattedDate = `${now.toLocaleDateString("uk-UA")}, ${now.toLocaleTimeString("uk-UA", { hour: "2-digit", minute: "2-digit" })}`;
+  useEffect(() => {
+    if (isMockData || !ready || user?.role !== "admin") {
+      if (!isMockData && user?.role !== "admin") setMessages([]);
+      return;
+    }
 
-    const newMsg = {
-      id: Date.now(),
+    let cancelled = false;
+    applicationService
+      .list()
+      .then((rows) => {
+        if (!cancelled) {
+          setMessages(rows);
+          setError("");
+        }
+      })
+      .catch((cause) => {
+        if (!cancelled) setError(errorMessage(cause));
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.role, ready]);
+
+  const addMessage = async ({ name, contact, message }) => {
+    if (isMockData) {
+      const now = new Date();
+      const formattedDate = `${now.toLocaleDateString("uk-UA")}, ${now.toLocaleTimeString("uk-UA", { hour: "2-digit", minute: "2-digit" })}`;
+      const newMsg = {
+        id: Date.now(),
+        name: name.trim(),
+        contact: contact.trim(),
+        message: message.trim(),
+        status: "Нове",
+        createdAt: formattedDate,
+      };
+      setMessages((prev) => [newMsg, ...prev]);
+      return newMsg;
+    }
+
+    const created = await applicationService.create({
       name: name.trim(),
       contact: contact.trim(),
       message: message.trim(),
-      status: "Нове",
-      createdAt: formattedDate,
-    };
-
-    setMessages((prev) => [newMsg, ...prev]);
-    return newMsg;
+    });
+    setMessages((prev) => [created, ...prev]);
+    return created;
   };
 
-  const updateMessageStatus = (id, newStatus = "Опрацьовано") => {
+  const updateMessageStatus = async (id, newStatus = "Опрацьовано") => {
+    if (isMockData) {
+      setMessages((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, status: newStatus } : item,
+        ),
+      );
+      return;
+    }
+
+    const updated = await applicationService.updateStatus(id, newStatus);
     setMessages((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, status: newStatus } : m)),
+      prev.map((item) => (item.id === id ? updated : item)),
     );
+    return updated;
   };
 
-  const deleteMessage = (id) => {
-    setMessages((prev) => prev.filter((m) => m.id !== id));
+  const deleteMessage = async (id) => {
+    if (!isMockData) {
+      await applicationService.delete(id);
+    }
+    setMessages((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const newCount = messages.filter((m) => m.status === "Нове").length;
+  const newCount = messages.filter((item) => item.status === "Нове").length;
 
   return (
     <MessagesContext.Provider
@@ -104,6 +159,7 @@ export function MessagesProvider({ children }) {
         updateMessageStatus,
         deleteMessage,
         newCount,
+        error,
       }}
     >
       {children}

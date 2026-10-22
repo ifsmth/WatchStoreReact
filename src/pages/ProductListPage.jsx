@@ -9,9 +9,11 @@ import {
   Watch,
 } from "lucide-react";
 import ProductCard from "../components/products/ProductCard.jsx";
-import { brandsList, mechanismsList, gendersList } from "../data/products.js";
+import { mechanismsList, gendersList } from "../data/products.js";
+import { useCatalog } from "../contexts/CatalogContext.jsx";
 
 export default function ProductListPage({ items = [] }) {
+  const { brandsList, status, error, reload } = useCatalog();
   const [searchParams, setSearchParams] = useSearchParams();
   const urlBrand = searchParams.get("brand");
 
@@ -342,7 +344,22 @@ export default function ProductListPage({ items = [] }) {
 
         {/* Right: Products Grid */}
         <section aria-label="Список товарів">
-          {filteredProducts.length > 0 ? (
+          {status === "loading" ? (
+            <p style={{ color: "rgba(6, 78, 59, 0.7)" }}>
+              Завантаження каталогу…
+            </p>
+          ) : status === "error" ? (
+            <div className="chrono-empty-box">
+              <p style={{ marginBottom: "1rem" }}>{error}</p>
+              <button
+                type="button"
+                onClick={() => void reload()}
+                className="chrono-btn-primary"
+              >
+                Спробувати ще раз
+              </button>
+            </div>
+          ) : filteredProducts.length > 0 ? (
             <div className="chrono-products-grid">
               {filteredProducts.map((product) => (
                 <ProductCard

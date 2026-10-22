@@ -1,103 +1,111 @@
+import { apiRequest } from "./apiClient.js";
+import { normalizeOrder } from "./mappers.js";
 import { ServiceError } from "./ServiceError.js";
-import { toOrder, toOrderInput, toOrderList } from "./orderContract.js";
 
-export function createApiOrderService(baseUrl) {
-  if (!baseUrl?.trim()) {
-    throw new ServiceError("Не налаштовано адресу API.", { code: "CONFIG" });
-  }
-  const base = baseUrl.trim().replace(/\/+$/, "");
-
-  async function request(path, { method = "GET", body, signal } = {}) {
-    let response;
-    try {
-      response = await fetch(`${base}${path}`, {
-        method,
-        signal,
-        headers: {
-          Accept: "application/json",
-          ...(body === undefined ? {} : { "Content-Type": "application/json" }),
-        },
-        ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-      });
-    } catch (error) {
-      if (error.name === "AbortError") throw error;
-      throw new ServiceError("Не вдалося зв’язатися із сервісом.", {
-        code: "NETWORK",
-      });
-    }
-
-    if (!response.ok) {
-      const messages = {
-        400: "Сервіс відхилив дані замовлення.",
-        401: "Для цієї дії потрібна автентифікація.",
-        403: "Сервіс не дозволяє цю дію.",
-        404: "Замовлення не знайдено.",
-        409: "Дані змінилися. Оновіть їх перед повторною дією.",
-        422: "Сервіс не прийняв значення полів.",
-        429: "Забагато запитів. Повторіть дію пізніше.",
-      };
-      throw new ServiceError(
-        messages[response.status] ?? "Сервіс тимчасово не може виконати дію.",
-        {
-          code: response.status === 404 ? "NOT_FOUND" : "HTTP",
-          status: response.status,
-        },
-      );
-    }
-
-    if (response.status === 204) return undefined;
-
-    try {
-      return await response.json();
-    } catch (error) {
-      if (error.name === "AbortError") throw error;
-      throw new ServiceError("Сервіс повернув відповідь не у форматі JSON.", {
-        code: "BAD_DATA",
-      });
-    }
-  }
-
-  function recordPath(id) {
-    return `/orders/${encodeURIComponent(id)}`;
+function toCreateBody(input) {
+  if (Array.isArray(input.items) && input.items.length > 0) {
+    return {
+      customer_name: input.customer_name || input.customerName,
+      phone: input.phone,
+      email: input.email,
+      comment: input.comment || "",
+      items: input.items.map((item) => ({
+        product_id: Number(item.product_id ?? item.productId),
+        quantity: Number(item.quantity),
+      })),
+    };
   }
 
   return {
+    customer_name: input.customer_name || input.customerName,
+    phone: input.phone,
+    email: input.email,
+    comment: input.comment || "",
+    items: [
+      {
+        product_id: Number(input.product_id ?? input.productId),
+        quantity: Number(input.quantity || 1),
+      },
+    ],
+  };
+}
+
+function toContactBody(input) {
+  return {
+    customer_name:
+      input.customer_name ||
+      input.customerName ||
+      input.customer?.name ||
+      "",
+    phone: input.phone || input.customer?.phone || "",
+    email: input.email || input.customer?.email || "",
+    comment: input.comment || "",
+  };
+}
+
+export function createApiOrderService() {
+  return {
     async getAll({ signal } = {}) {
-      return toOrderList(await request("/orders", { signal }));
+      const rows = await apiRequest("/orders", { auth: true, signal });
+      if (!Array.isArray(rows)) {
+        throw new ServiceError("Джерело повернуло некоректний список.", {
+          code: "BAD_DATA",
+        });
+      }
+      return rows.map(normalizeOrder);
     },
+
     async getById(id, { signal } = {}) {
-      const record = toOrder(await request(recordPath(id), { signal }));
-      if (String(record.id) !== String(id)) {
-        throw new ServiceError("Сервіс повернув інше замовлення.", {
-          code: "BAD_DATA",
-        });
-      }
-      return record;
+      return normalizeOrder(
+        await apiRequest(`/orders/${encodeURIComponent(id)}`, {
+          auth: true,
+          signal,
+        }),
+      );
     },
+
     async create(input) {
-      return toOrder(
-        await request("/orders", {
+      return normalizeOrder(
+        await apiRequest("/orders", {
           method: "POST",
-          body: toOrderInput(input),
+          auth: true,
+          body: toCreateBody(input),
         }),
       );
     },
+
     async update(id, input) {
-      const record = toOrder(
-        await request(recordPath(id), {
-          method: "PUT",
-          body: toOrderInput(input),
+      if (input?.status && !input.customerName && !input.customer_name) {
+        return this.updateStatus(id, input.status);
+      }
+      return this.updateContacts(id, input);
+    },
+
+    async updateStatus(id, status) {
+      return normalizeOrder(
+        await apiRequest(`/admin/orders/${encodeURIComponent(id)}/status`, {
+          method: "PATCH",
+          auth: true,
+          body: { status },
         }),
       );
-      if (String(record.id) !== String(id)) {
-        throw new ServiceError("Сервіс змінив ідентифікатор замовлення.", {
-          code: "BAD_DATA",
-        });
-      }
-      return record;
     },
+
+    async updateContacts(id, input) {
+      return normalizeOrder(
+        await apiRequest(`/admin/orders/${encodeURIComponent(id)}`, {
+          method: "PUT",
+          auth: true,
+          body: toContactBody(input),
+        }),
+      );
+    },
+
     async delete(id) {
-      await request(recordPath(id), { method: "DELETE" });
+      await apiRequest(`/admin/orders/${encodeURIComponent(id)}`, {
+        method: "DELETE",
+        auth: true,
+      });
     },
   };
 }

@@ -5,17 +5,19 @@ import { useAuth } from "../contexts/AuthContext.jsx";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("admin@watch.com");
-  const [password, setPassword] = useState("admin123");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSubmitting(true);
 
-    // Викликаємо login і явно вказуємо, що чекаємо на роль "admin"
-    const result = login(email, password, "admin");
+    const result = await login(email, password, "admin");
+    setSubmitting(false);
 
     if (result.success) {
       navigate("/admin");
@@ -72,9 +74,10 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             className="admin-btn admin-btn-accent admin-btn-block"
+            disabled={submitting}
           >
             <LogIn size={18} />
-            <span>Увійти в панель</span>
+            <span>{submitting ? "Вхід..." : "Увійти в панель"}</span>
           </button>
         </form>
       </div>

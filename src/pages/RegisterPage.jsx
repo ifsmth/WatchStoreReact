@@ -22,7 +22,9 @@ export default function RegisterPage() {
     setTimeout(() => setNotification(null), 3000);
   };
 
-  const handleRegister = (e) => {
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -38,8 +40,8 @@ export default function RegisterPage() {
       setError("Введіть номер телефону.");
       return;
     }
-    if (formData.password.length < 6) {
-      setError("Пароль має містити мінімум 6 символів.");
+    if (formData.password.length < 8) {
+      setError("Пароль має містити мінімум 8 символів.");
       return;
     }
     if (formData.password !== formData.confirmPassword) {
@@ -47,12 +49,14 @@ export default function RegisterPage() {
       return;
     }
 
-    const result = register(
+    setSubmitting(true);
+    const result = await register(
       formData.name.trim(),
       formData.email.trim(),
       formData.password,
       formData.phone_number.trim(),
     );
+    setSubmitting(false);
 
     if (result.success) {
       showNotification(
@@ -145,7 +149,7 @@ export default function RegisterPage() {
             <input
               type="password"
               required
-              placeholder="Мінімум 6 символів"
+              placeholder="Мінімум 8 символів"
               value={formData.password}
               onChange={(e) =>
                 setFormData({ ...formData, password: e.target.value })
@@ -173,8 +177,9 @@ export default function RegisterPage() {
             type="submit"
             className="chrono-btn-auth-amber"
             style={{ marginTop: "1rem" }}
+            disabled={submitting}
           >
-            Зареєструватися
+            {submitting ? "Реєстрація..." : "Зареєструватися"}
           </button>
         </form>
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router";
 import {
   ChevronRight,
@@ -11,23 +11,62 @@ import {
   Eye,
 } from "lucide-react";
 import { useCart } from "../contexts/CartContext.jsx";
+import { useCatalog } from "../contexts/CatalogContext.jsx";
+import { catalogService } from "../services/catalogService.js";
+import { isMockData } from "../services/dataSource.js";
 
-export default function ProductDetailsPage({ items = [] }) {
+export default function ProductDetailsPage() {
   const { productId } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const { products } = useCatalog();
 
   const [selectedImgIndex, setSelectedImgIndex] = useState(0);
   const [notification, setNotification] = useState(null);
+  const [product, setProduct] = useState(() =>
+    products.find((item) => String(item.id) === String(productId)),
+  );
+  const [notFound, setNotFound] = useState(false);
 
-  const product = items.find((item) => item.id === Number(productId));
+  useEffect(() => {
+    const fromCatalog = products.find(
+      (item) => String(item.id) === String(productId),
+    );
+    if (fromCatalog) {
+      setProduct(fromCatalog);
+      setNotFound(false);
+      return;
+    }
+
+    if (isMockData) {
+      setNotFound(true);
+      return;
+    }
+
+    let cancelled = false;
+    catalogService
+      .getProduct(productId)
+      .then((item) => {
+        if (!cancelled) {
+          setProduct(item);
+          setNotFound(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setNotFound(true);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [productId, products]);
 
   const showNotification = (msg) => {
     setNotification(msg);
     setTimeout(() => setNotification(null), 3000);
   };
 
-  if (!product) {
+  if (notFound && !product) {
     return (
       <div
         className="chrono-container"
@@ -49,6 +88,14 @@ export default function ProductDetailsPage({ items = [] }) {
         <Link to="/products" className="chrono-btn-primary">
           Повернутися до каталогу
         </Link>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="chrono-container" style={{ padding: "4rem 1rem" }}>
+        <p style={{ textAlign: "center" }}>Завантаження товару…</p>
       </div>
     );
   }

@@ -1,10 +1,11 @@
 import { createContext, useContext } from "react";
 import { useSearchParams } from "react-router";
-import { products } from "../data/products.js";
+import { useCatalog } from "./CatalogContext.jsx";
 
 const ProductSelectionContext = createContext(undefined);
 
 export function ProductSelectionProvider({ children }) {
+  const { products } = useCatalog();
   const [searchParams, setSearchParams] = useSearchParams();
   const urlProductId = searchParams.get("productId");
   const selectedId = urlProductId ? Number(urlProductId) : null;

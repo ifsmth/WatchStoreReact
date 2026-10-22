@@ -8,10 +8,13 @@ import {
 } from "react";
 import { orderService } from "../services/orderService.js";
 import { errorMessage } from "../services/ServiceError.js";
+import { isMockData } from "../services/dataSource.js";
+import { useAuth } from "./AuthContext.jsx";
 
 const OrdersContext = createContext(null);
 
 export function OrdersProvider({ children }) {
+  const { user, ready } = useAuth();
   const [orders, setOrders] = useState([]);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
@@ -25,6 +28,14 @@ export function OrdersProvider({ children }) {
 
   const reload = useCallback(async () => {
     if (mutationLock.current) return;
+
+    if (!isMockData && !user) {
+      activeRead.current?.abort();
+      setOrders([]);
+      setStatus("success");
+      setError("");
+      return;
+    }
 
     activeRead.current?.abort();
     const controller = new AbortController();
@@ -45,17 +56,18 @@ export function OrdersProvider({ children }) {
       setError(errorMessage(cause));
       setStatus("error");
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     mounted.current = true;
+    if (!ready) return undefined;
     void reload();
     return () => {
       mounted.current = false;
       activeRead.current?.abort();
       readVersion.current += 1;
     };
-  }, [reload]);
+  }, [reload, ready]);
 
   async function mutate(operation, apply, message) {
     if (mutationLock.current || status !== "success") {
@@ -114,6 +126,28 @@ export function OrdersProvider({ children }) {
     );
   }
 
+  function updateOrderStatus(id, statusValue) {
+    return mutate(
+      () => orderService.updateStatus(id, statusValue),
+      (previous, record) =>
+        previous.map((entry) =>
+          String(entry.id) === String(id) ? record : entry,
+        ),
+      "Статус замовлення оновлено.",
+    );
+  }
+
+  function updateOrderContacts(id, input) {
+    return mutate(
+      () => orderService.updateContacts(id, input),
+      (previous, record) =>
+        previous.map((entry) =>
+          String(entry.id) === String(id) ? record : entry,
+        ),
+      "Зміни замовлення збережено.",
+    );
+  }
+
   function deleteOrder(id) {
     return mutate(
       () => orderService.delete(id),
@@ -132,6 +166,8 @@ export function OrdersProvider({ children }) {
         isMutating,
         createOrder,
         updateOrder,
+        updateOrderStatus,
+        updateOrderContacts,
         deleteOrder,
         notice,
         dismissNotice: () => setNotice(""),
