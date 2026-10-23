@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router";
 // Оболонки та контекст
 import AppLayout from "./components/layout/AppLayout.jsx";
 import OrdersLayout from "./components/layout/OrdersLayout.jsx";
+import ScrollToTop from "./components/layout/ScrollToTop.jsx";
 import { ProductSelectionProvider } from "./contexts/ProductSelectionContext.jsx";
 
 // Сторінки
@@ -53,6 +54,7 @@ export default function App() {
           <OrdersProvider>
             <CartProvider>
               <MessagesProvider>
+                <ScrollToTop />
                 <Routes>
                 {/* Головна оболонка застосунку, яка має <Outlet /> */}
                 <Route path="/" element={<AppLayout />}>
