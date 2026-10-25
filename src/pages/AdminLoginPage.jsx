@@ -51,7 +51,7 @@ export default function AdminLoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="admin-input"
-              placeholder="admin@watch.com"
+              placeholder="example@mail.com"
               required
             />
           </div>

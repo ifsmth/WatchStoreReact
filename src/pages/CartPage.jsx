@@ -15,6 +15,7 @@ export default function CartPage() {
   const [notification, setNotification] = useState(null);
   const [checkoutError, setCheckoutError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [orderComment, setOrderComment] = useState("");
 
   const showNotification = (msg) => {
     setNotification(msg);
@@ -34,7 +35,7 @@ export default function CartPage() {
       customerName: user.name,
       phone: user.phone_number || user.phone || "",
       email: user.email,
-      comment: "",
+      comment: orderComment.trim(),
       items: cartItems.map((item) => ({
         product_id: item.product.id,
         quantity: item.quantity,
@@ -44,6 +45,7 @@ export default function CartPage() {
 
     if (result.ok) {
       setOrderSuccess(true);
+      setOrderComment("");
       clearCart();
     } else {
       setCheckoutError(result.message || "Не вдалося оформити замовлення.");
@@ -332,6 +334,31 @@ export default function CartPage() {
             })}
           </div>
 
+          {/* Додатковий опис / коментар до замовлення */}
+          <div style={{ marginTop: "1.5rem", marginBottom: "1.5rem" }}>
+            <label
+              htmlFor="order-comment"
+              style={{
+                display: "block",
+                fontSize: "0.8125rem",
+                fontWeight: 700,
+                color: "var(--chrono-emerald-950)",
+                marginBottom: "0.5rem",
+                textTransform: "uppercase",
+                letterSpacing: "0.04em",
+              }}
+            >
+              Коментар або побажання до замовлення
+            </label>
+            <textarea
+              id="order-comment"
+              rows={3}
+              value={orderComment}
+              onChange={(event) => setOrderComment(event.target.value)}
+              placeholder="Вкажіть особливості доставки, зручний час для дзвінка або інші примітки..."
+              className="chrono-textarea-light"
+            />
+          </div>
           <div
             style={{
               paddingTop: "1.5rem",

@@ -2568,3 +2568,25 @@ body {
     padding: 1rem;
   }
 }
+
+.chrono-textarea-light {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: var(--chrono-radius-md);
+  border: 1px solid var(--chrono-emerald-200);
+  font-size: 0.8125rem;
+  font-family: inherit;
+  background-color: rgba(236, 253, 245, 0.2);
+  color: var(--chrono-emerald-950);
+  box-sizing: border-box;
+  resize: vertical;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.chrono-textarea-light:focus {
+  outline: none;
+  border-color: var(--chrono-amber-500);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+}
