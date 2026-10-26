@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Plus, Trash2, Tag } from "lucide-react";
-import { useCatalog } from "../contexts/CatalogContext.jsx";
-import { catalogService } from "../services/catalogService.js";
-import { errorMessage } from "../services/ServiceError.js";
+import { useCatalog } from "../../contexts/CatalogContext.jsx";
+import { catalogService } from "../../services/catalogService.js";
+import { errorMessage } from "../../services/ServiceError.js";
 
 export default function AdminBrandsPage() {
   const { brands, reload, status, error } = useCatalog();

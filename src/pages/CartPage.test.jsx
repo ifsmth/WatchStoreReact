@@ -1,74 +1,116 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { expect, test, vi } from "vitest";
-import CartPage from "./OrderPage.jsx";
-import { testItem, validInput, savedOrder } from "../test/fixtures.js";
+import { MemoryRouter } from "react-router";
+import { expect, test, vi, beforeEach } from "vitest";
+import CartPage from "./CartPage.jsx";
+import { testItem, savedOrder } from "../test/fixtures.js";
 import { deferred } from "../test/deferred.js";
+import * as CartContextModule from "../contexts/CartContext.jsx";
+import * as AuthContextModule from "../contexts/AuthContext.jsx";
+import * as OrdersContextModule from "../contexts/OrdersContext.jsx";
 
-// Допоміжна функція для рендеру нашої сторінки
-function renderEditor(onSave) {
-  return render(
-    <CartPage
-      title="Нове замовлення"
-      item={testItem}
-      onSave={onSave}
-      onCancel={vi.fn()}
-      submitLabel="Створити замовлення"
-    />,
+// Допоміжна функція рендеру CartPage з моками контекстів
+function setupCartPage({
+  cartItems = [{ product: testItem, quantity: 2 }],
+  cartTotal = 9700,
+  user = {
+    name: "Іван Франко",
+    email: "ivan@example.com",
+    phone: "+380501234567",
+  },
+  createOrder = vi.fn().mockResolvedValue({ ok: true, record: savedOrder }),
+  clearCart = vi.fn(),
+  updateQuantity = vi.fn(),
+  removeFromCart = vi.fn(),
+} = {}) {
+  vi.spyOn(CartContextModule, "useCart").mockReturnValue({
+    cartItems,
+    cartTotal,
+    clearCart,
+    updateQuantity,
+    removeFromCart,
+    cartCount: cartItems.reduce((acc, item) => acc + item.quantity, 0),
+  });
+
+  vi.spyOn(AuthContextModule, "useAuth").mockReturnValue({
+    user,
+    ready: true,
+  });
+
+  vi.spyOn(OrdersContextModule, "useOrders").mockReturnValue({
+    createOrder,
+    orders: [savedOrder],
+    status: "success",
+  });
+
+  const userAction = userEvent.setup();
+  render(
+    <MemoryRouter>
+      <CartPage />
+    </MemoryRouter>,
   );
+
+  return { userAction, createOrder, clearCart };
 }
 
-// Допоміжна функція для заповнення форми валідними даними
-async function fillValidForm(user) {
-  // Зверніть увагу: якщо у вашій формі підписи (labels) відрізняються, змініть текст у регулярних виразах /.../i
-  const nameInput = screen.getByLabelText(/Ім'я/i);
-  await user.clear(nameInput);
-  await user.type(nameInput, validInput.customerName);
+beforeEach(() => {
+  vi.restoreAllMocks();
+});
 
-  const phoneInput = screen.getByLabelText(/Телефон/i);
-  await user.clear(phoneInput);
-  await user.type(phoneInput, validInput.phone);
+test("відображає повідомлення про порожній кошик, якщо товарів немає", () => {
+  setupCartPage({ cartItems: [] });
 
-  const quantityInput = screen.getByRole("spinbutton", { name: /Кількість/i });
-  await user.clear(quantityInput);
-  await user.type(quantityInput, String(validInput.quantity));
-}
+  expect(screen.getByText(/Кошик порожній/i)).toBeInTheDocument();
+  expect(
+    screen.getByRole("link", { name: /Перейти до каталогу/i }),
+  ).toBeInTheDocument();
+});
 
-test("передає нормалізовані поля й блокує повтор до відповіді", async () => {
-  const user = userEvent.setup();
+test("передає нормалізовані поля, коментар та блокує повторне натискання під час оформлення", async () => {
   const pending = deferred();
+  const createOrder = vi.fn().mockReturnValue(pending.promise);
+  const clearCart = vi.fn();
 
-  // onSave повертає "завислу" обіцянку, щоб ми могли перевірити стан завантаження
-  const onSave = vi.fn().mockReturnValue(pending.promise);
+  const { userAction } = setupCartPage({ createOrder, clearCart });
 
-  renderEditor(onSave);
-  await fillValidForm(user);
+  // Перевіряємо наявність товару та підсумкової суми
+  expect(screen.getByText(testItem.title)).toBeInTheDocument();
+  expect(screen.getByText(/Загальна сума:/i)).toBeInTheDocument();
 
-  await user.click(screen.getByRole("button", { name: "Створити замовлення" }));
+  // Заповнюємо коментар до замовлення
+  const commentInput = screen.getByRole("textbox", {
+    name: /Коментар або побажання/i,
+  });
+  await userAction.type(commentInput, "Доставити кур'єром після 18:00");
 
-  const submitBtn = screen.getByRole("button", { name: "Збереження..." });
-  expect(submitBtn).toBeDisabled(); // Кнопка має бути заблокована
+  const checkoutBtn = screen.getByRole("button", {
+    name: /Оформити замовлення/i,
+  });
+  await userAction.click(checkoutBtn);
 
-  // Спроба натиснути ще раз під час завантаження
-  await user.click(submitBtn);
-  expect(onSave).toHaveBeenCalledTimes(1); // Функція все одно викликана лише 1 раз
+  // Кнопка переходить у стан завантаження і блокується
+  const pendingBtn = screen.getByRole("button", { name: /Оформлення.../i });
+  expect(pendingBtn).toBeDisabled();
 
-  // Завершуємо "завислу" обіцянку успіхом
+  // Повторне натискання під час виконання не викликає сервіс вдруге
+  await userAction.click(pendingBtn);
+  expect(createOrder).toHaveBeenCalledTimes(1);
+
+  // Завершуємо проміс успіхом
   await act(async () => {
     pending.resolve({ ok: true, record: savedOrder });
     await pending.promise;
   });
 
+  // Перевіряємо повідомлення про успіх та очищення кошика
   expect(
-    screen.getByRole("button", { name: "Створити замовлення" }),
-  ).toBeEnabled();
+    await screen.findByText(/Замовлення успішно оформлено!/i),
+  ).toBeInTheDocument();
+  expect(clearCart).toHaveBeenCalledTimes(1);
 });
 
-test("після відмови зберігає введення й дозволяє свідомий повтор", async () => {
-  const user = userEvent.setup();
-
-  // Імітуємо спочатку помилку, а потім успіх
-  const onSave = vi
+test("після відмови збереження показує помилку, не знищує введений коментар і дозволяє свідомий повтор", async () => {
+  const createOrder = vi
     .fn()
     .mockResolvedValueOnce({
       ok: false,
@@ -76,28 +118,39 @@ test("після відмови зберігає введення й дозво�
     })
     .mockResolvedValueOnce({ ok: true, record: savedOrder });
 
-  renderEditor(onSave);
-  await fillValidForm(user);
+  const { userAction } = setupCartPage({ createOrder });
 
-  await user.click(screen.getByRole("button", { name: "Створити замовлення" }));
+  const commentInput = screen.getByRole("textbox", {
+    name: /Коментар або побажання/i,
+  });
+  await userAction.type(commentInput, "Тестовий коментар покупця");
 
-  // Перевіряємо, що з'явилося повідомлення про помилку
+  const checkoutBtn = screen.getByRole("button", {
+    name: /Оформити замовлення/i,
+  });
+  await userAction.click(checkoutBtn);
+
+  // Перевіряємо показ повідомлення про помилку
   expect(await screen.findByRole("alert")).toHaveTextContent(
     "Сервіс тимчасово недоступний.",
   );
 
-  // Перевіряємо, що ім'я не зникло з поля вводу
-  expect(screen.getByLabelText(/Ім'я/i)).toHaveValue(validInput.customerName);
+  // Перевіряємо, що чернетка (введений коментар) не стерлася
+  expect(commentInput).toHaveValue("Тестовий коментар покупця");
 
-  // Натискаємо кнопку ще раз (свідомий повтор)
-  await user.click(screen.getByRole("button", { name: "Створити замовлення" }));
+  // Свідомий повтор клієнтом
+  await userAction.click(
+    screen.getByRole("button", { name: /Оформити замовлення/i }),
+  );
 
+  // Сервіс викликано вдруге
   await waitFor(() => {
-    expect(
-      screen.getByRole("button", { name: "Створити замовлення" }),
-    ).toBeEnabled();
+    expect(createOrder).toHaveBeenCalledTimes(2);
   });
 
-  expect(onSave).toHaveBeenCalledTimes(2);
-  expect(screen.queryByRole("alert")).not.toBeInTheDocument(); // Помилка зникла
+  // Успішне завершення, помилка зникла
+  expect(
+    await screen.findByText(/Замовлення успішно оформлено!/i),
+  ).toBeInTheDocument();
+  expect(screen.queryByRole("alert")).not.toBeInTheDocument();
 });

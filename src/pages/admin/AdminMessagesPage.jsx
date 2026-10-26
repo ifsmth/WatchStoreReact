@@ -13,7 +13,7 @@ import {
   Mail,
   FileText,
 } from "lucide-react";
-import { useMessages } from "../contexts/MessagesContext.jsx";
+import { useMessages } from "../../contexts/MessagesContext.jsx";
 
 export default function AdminMessagesPage() {
   const { messages, updateMessageStatus, deleteMessage } = useMessages();

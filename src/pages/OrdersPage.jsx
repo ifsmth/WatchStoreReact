@@ -8,8 +8,9 @@ import OrderTable from "../components/orders/OrderTable.jsx";
 import { useOrders } from "../contexts/OrdersContext.jsx";
 import useOrderFilters from "../hooks/useOrderFilters.js";
 import useDeleteOrder from "../hooks/useDeleteOrder.js";
+import { products } from "../data/products.js";
 
-export default function OrdersPage({ items }) {
+export default function OrdersPage({ items = products }) {
   // Дістаємо reload та isMutating з контексту
   const { orders, reload, isMutating } = useOrders();
   const filters = useOrderFilters(orders, items);

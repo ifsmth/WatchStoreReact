@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router";
 import { ArrowLeft, Save, X, Trash2 } from "lucide-react";
-import { useCatalog } from "../contexts/CatalogContext.jsx";
-import { catalogService } from "../services/catalogService.js";
-import { errorMessage } from "../services/ServiceError.js";
+import { useCatalog } from "../../contexts/CatalogContext.jsx";
+import { catalogService } from "../../services/catalogService.js";
+import { errorMessage } from "../../services/ServiceError.js";
 
 const emptyProduct = {
   title: "",

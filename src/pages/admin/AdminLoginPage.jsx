@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { ShieldCheck, LogIn } from "lucide-react";
-import { useAuth } from "../contexts/AuthContext.jsx";
+import { useAuth } from "../../contexts/AuthContext.jsx";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("admin@watch.com");

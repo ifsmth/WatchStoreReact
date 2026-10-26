@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router";
 import { Search, RefreshCw, Eye, Trash2 } from "lucide-react";
-import { useOrders } from "../contexts/OrdersContext.jsx";
+import { useOrders } from "../../contexts/OrdersContext.jsx";
 
 export default function AdminOrdersPage() {
   const { orders, deleteOrder, reload } = useOrders();

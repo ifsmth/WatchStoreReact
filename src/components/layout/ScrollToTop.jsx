@@ -10,13 +10,21 @@ export default function ScrollToTop() {
 
   useEffect(() => {
     // 1. Reset window and document scroll
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: "instant",
-    });
+    if (
+      typeof window !== "undefined" &&
+      typeof window.scrollTo === "function"
+    ) {
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "instant",
+      });
+    }
 
-    if (document.documentElement) {
+    if (
+      document.documentElement &&
+      typeof document.documentElement.scrollTo === "function"
+    ) {
       document.documentElement.scrollTo({
         top: 0,
         left: 0,
@@ -24,7 +32,7 @@ export default function ScrollToTop() {
       });
     }
 
-    if (document.body) {
+    if (document.body && typeof document.body.scrollTo === "function") {
       document.body.scrollTo({
         top: 0,
         left: 0,
@@ -34,7 +42,7 @@ export default function ScrollToTop() {
 
     // 2. Also reset any internal scrollable main containers (e.g. admin content area)
     const adminContent = document.querySelector(".admin-content");
-    if (adminContent) {
+    if (adminContent && typeof adminContent.scrollTo === "function") {
       adminContent.scrollTo({
         top: 0,
         left: 0,
@@ -43,7 +51,7 @@ export default function ScrollToTop() {
     }
 
     const mainContent = document.querySelector(".chrono-main");
-    if (mainContent) {
+    if (mainContent && typeof mainContent.scrollTo === "function") {
       mainContent.scrollTo({
         top: 0,
         left: 0,

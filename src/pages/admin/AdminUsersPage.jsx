@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { authService } from "../services/authService.js";
-import { errorMessage } from "../services/ServiceError.js";
-import { formatDate } from "../services/mappers.js";
+import { authService } from "../../services/authService.js";
+import { errorMessage } from "../../services/ServiceError.js";
+import { formatDate } from "../../services/mappers.js";
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState([]);
